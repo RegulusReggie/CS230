@@ -9,9 +9,11 @@ def getFunctions(filestring):
 	blocks_linenos = []
 	# find starting and ending line point of each function
 	lines = filestring.split('\n')
-	for line in lines:
-		line = re.sub('".*?"', '', line)
-		line = re.sub("'.*?'", '', line)
+	
+	for idx, _ in enumerate(lines):
+		lines[idx] = re.sub('".*?"', '', lines[idx])
+		lines[idx] = re.sub("'.*?'", '', lines[idx])
+		lines[idx] = re.sub('#.*?$', '', lines[idx])
 	i = 0
 	lineSearchIdx = 0
 	while i < len(lines):
