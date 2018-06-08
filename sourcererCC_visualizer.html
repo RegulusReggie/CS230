@@ -49,6 +49,8 @@ $('#upload').change(e => {
     
     var token_file = findFile(files, '.pairs');
     var stats_file = findFile(files, '.stats');
+    var save_file = findFile(files, 'SourcererCC_Results');
+
     (function(file) {
         var reader = new FileReader();
         reader.onload = function(e) {
@@ -82,6 +84,26 @@ $('#upload').change(e => {
                                 })
                               + "</table>";
             $('#clone-table').html(cloneListHtml);
+            (function(file) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    var text = e.target.result;
+                    var save_text = text.split('\n');
+                    save_text.splice(0, 1);
+                    var save_text_tokens = save_text.map(text => text.split(' : '));
+                    for (var i = 0; i < save_text_tokens.length; i++) {
+                        var left = save_text_tokens[i][0];
+                        var right = save_text_tokens[i][1];
+                        var value = save_text_tokens[i][2];
+                        var idx = findClonePairIdx(left, right);
+                        if (idx != -1) {
+                            results[idx] = value;
+                            $('tr[index="' + idx + '"]').css('background-color', 'Chartreuse');
+                        }
+                    }
+                };
+                if (file) reader.readAsText(file);
+            })(save_file);
         };
         reader.readAsText(file);
     })(token_file);
@@ -116,7 +138,6 @@ $('#upload').change(e => {
 
 $('#clone-table').on('click', '.clone-pair', e => {
     currentCloneIdx = e.currentTarget.getAttribute('index');
-    console.log(currentCloneIdx);
     var clonePairTokens = e.currentTarget.children[0].innerHTML.split(':');
     var left = clonePairTokens[0];
     var right = clonePairTokens[1];
@@ -129,7 +150,7 @@ $('#clone-table').on('click', '.clone-pair', e => {
         reader.onload = function(e) {
             var text = e.target.result;
             var file_text = text.split('\n');
-            file_text = file_text.slice(block.start, block.end);
+            file_text = file_text.slice(block.start, block.end + 1);
             var cloneTableHTML = "<table>";
             file_text.map((text, idx) => {
                 cloneTableHTML += "<tr>"
@@ -137,7 +158,7 @@ $('#clone-table').on('click', '.clone-pair', e => {
                                 + (block.start + idx).toString().padStart(3)
                                 + "</td>"
                                 + "<td style='white-space: pre-wrap; background-color: BlanchedAlmond'>"
-                                + text
+                                + escapeHtml(text)
                                 + "</td></tr>";
             });
             cloneTableHTML += "</table>";
@@ -190,7 +211,7 @@ function saveResult() {
     result_text.unshift("#F:" + nums[0] + ", #T1:" + nums[1] + ", #T2:" + nums[2] + ", #T3:" + nums[3]);
     var textToWrite = result_text.join('\n');
     var textFileAsBlob = new Blob([textToWrite], {type:'text/plain'});
-    var fileNameToSaveAs = 'SourcererCC_Results';
+    var fileNameToSaveAs = 'SourcererCC_Results.save';
 
     var downloadLink = document.createElement("a");
     downloadLink.download = fileNameToSaveAs;
@@ -219,5 +240,35 @@ function findFile(files, fileName) {
         if (files[key].webkitRelativePath.indexOf(fileName) != -1)
             return files[key];
     }
+    return null;
+}
+
+function findClonePairIdx(left, right) {
+    left = left.split('-');
+    right = right.split('-');
+    for (var i = 0; i < pairs.length; i++)
+        if (pairs[i].first.fileId == left[0]
+         && pairs[i].first.blockId == left[1]
+         && pairs[i].second.fileId == right[0]
+         && pairs[i].second.blockId == right[1])
+            return i;
+    return -1;
+}
+
+var entityMap = {
+  '&': '&amp;',
+  '<': '&lt;',
+  '>': '&gt;',
+  '"': '&quot;',
+  "'": '&#39;',
+  '/': '&#x2F;',
+  '`': '&#x60;',
+  '=': '&#x3D;'
+};
+
+function escapeHtml (string) {
+  return String(string).replace(/[&<>"'`=\/]/g, function (s) {
+    return entityMap[s];
+  });
 }
 </script>
