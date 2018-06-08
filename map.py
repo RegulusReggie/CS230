@@ -72,6 +72,6 @@ if __name__ == '__main__':
 		for j in range(len(block_list2)):
 			wen_block = block_list2[j]
 			if (xia_block[0] == wen_block[0] and xia_block[1] == wen_block[1]) or (xia_block[0] == wen_block[1] and xia_block[1] == wen_block[0]):
-				mapping[str(i)] = str(j)
+				mapping[str(i + 1)] = str(j + 1)
 				break
 	print(mapping)
