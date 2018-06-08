@@ -130,7 +130,17 @@ $('#clone-table').on('click', '.clone-pair', e => {
             var text = e.target.result;
             var file_text = text.split('\n');
             file_text = file_text.slice(block.start, block.end);
-            var cloneText = file_text.join('\n');
+            var cloneTableHTML = "<table>";
+            file_text.map((text, idx) => {
+                cloneTableHTML += "<tr>"
+                                + "<td style='vertical-align: top'>"
+                                + (block.start + idx).toString().padStart(3)
+                                + "</td>"
+                                + "<td style='white-space: pre-wrap; background-color: BlanchedAlmond'>"
+                                + text
+                                + "</td></tr>";
+            });
+            cloneTableHTML += "</table>";
             var htmlContent = ["<label>",
                                cloneId,
                                "</label>",
@@ -138,9 +148,8 @@ $('#clone-table').on('click', '.clone-pair', e => {
                                "<label>",
                                block.filePath,
                                "</label>",
-                               "<div style='white-space: pre-wrap'>",
-                               cloneText,
-                               "</div>"].join('');
+                               cloneTableHTML
+                               ].join('');
             $(domId).html(htmlContent);
         };
     };
@@ -150,11 +159,11 @@ $('#clone-table').on('click', '.clone-pair', e => {
                + '<input type="radio" name="clone" value="0" id="clone-0">'
                + '<label for="clone-0">F</label>&nbsp&nbsp'
                + '<input type="radio" name="clone" value="1" id="clone-1">'
-               + '<label for="clone-0">T1</label>&nbsp&nbsp'
+               + '<label for="clone-1">T1</label>&nbsp&nbsp'
                + '<input type="radio" name="clone" value="2" id="clone-2">' 
-               + '<label for="clone-0">T2</label>&nbsp&nbsp'
+               + '<label for="clone-2">T2</label>&nbsp&nbsp'
                + '<input type="radio" name="clone" value="3" id="clone-3">'
-               + '<label for="clone-0">T3</label>';
+               + '<label for="clone-3">T3</label>';
     $('#judgement').html(radios);
     if (results[currentCloneIdx] !== undefined)
         $('input[value="' + results[currentCloneIdx] + '"]').prop("checked", true);
