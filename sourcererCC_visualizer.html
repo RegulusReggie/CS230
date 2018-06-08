@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>SourcererCC Visualizer</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js"></script>
+  </head>
+  <body>
+    <div class="container" style="margin: 0 0 0 20px; padding: 0 0 0 0">
+        <div class="row">
+            <input id="upload" type="file" multiple directory webkitdirectory>
+            <button onclick="saveResult()">Save Result</button>
+        </div>
+        <div class="row">
+            <div style="max-height: 90vh; overflow: scroll" class="col-md-3" id="clone-table">
+            </div>
+            <div class="col-md-9">
+                <div class="row">
+                    <div class="col-md-6" id="left-clone" style="max-height: 80vh; overflow: scroll">
+                    </div>
+                    <div class="col-md-6" id="right-clone" style="max-height: 80vh; overflow: scroll">
+                    </div>
+                </div>
+                <div class="row" style="margin-top: 20px">
+                    <div class="col-md-4">
+                    </div>
+                    <div class="col-md-4" id="judgement">
+                    </div>
+                    <div class="col-md-4">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  </body>
+</html>
+
+<script>
+var fileStats = {};
+var files = {};
+var currentCloneIdx = -1;
+var results = {};
+var pairs;
+
+$('#upload').change(e => {
+    files = e.target.files;
+    if (!files.length) return;
+    
+    var token_file = findFile(files, 'clone.pairs');
+    var stats_file = findFile(files, 'clone.stats');
+    (function(file) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            var text = e.target.result;
+            var pairs_text = text.split('\n');
+            if (pairs_text[pairs_text.length - 1] == "")
+                pairs_text.splice(pairs_text.length - 1, 1);
+
+            pairs = pairs_text.map(text => {
+                var tokens = text.split(',');
+                return {
+                    first: {
+                        fileId: tokens[0],
+                        blockId: tokens[1]
+                    },
+                    second: {
+                        fileId: tokens[2],
+                        blockId: tokens[3]
+                    }
+                }
+            });
+            var cloneListHtml = "<table><tr><th>Clones</th></tr>"
+                              + pairs.map((pair, index) => {
+                                return "<tr class='clone-pair' index='" + index + "'>"
+                                     + "<td>"
+                                     + pair.first.fileId + '-' + pair.first.blockId
+                                     + ':'
+                                     + pair.second.fileId + '-' + pair.second.blockId
+                                     + "</td>"
+                                     + "</tr>";
+                                })
+                              + "</table>";
+            $('#clone-table').html(cloneListHtml);
+        };
+        reader.readAsText(file);
+    })(token_file);
+    
+    (function(file) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            var text = e.target.result;
+            var stats_text = text.split('\n');
+            if (stats_text[stats_text.length - 1] == "")
+                stats_text.splice(stats_text.length - 1, 1);
+            var currentFilePath = '';
+            for (var i = 0; i < stats_text.length; i++) {
+                var line_text = stats_text[i];
+                var text_tokens = line_text.split(',');
+                if (line_text[0] == 'f') {
+                    currentFilePath = text_tokens[2].slice(1, text_tokens[2].length - 1).match(/.zip\/(.+)$/g)[0].slice(5);
+                }
+                if (line_text[0] == 'b' && currentFilePath != '') {
+                    fileStats[text_tokens[1]] = {
+                        filePath: currentFilePath,
+                        start: parseInt(text_tokens[6], 10),
+                        end: parseInt(text_tokens[7], 10)
+                    }
+                }
+            }
+        };
+        reader.readAsText(file);
+    })(stats_file);
+})
+
+$('#clone-table').on('click', '.clone-pair', e => {
+    currentCloneIdx = e.currentTarget.getAttribute('index');
+    console.log(currentCloneIdx);
+    var clonePairTokens = e.currentTarget.children[0].innerHTML.split(':');
+    var left = clonePairTokens[0];
+    var right = clonePairTokens[1];
+    var generateCloneContent = function(cloneId, domId) {
+        var idTokens = cloneId.split('-');
+        var reader = new FileReader();
+        var block = fileStats[idTokens[1]]
+        var file = findFile(files, block.filePath);
+        reader.readAsText(file);
+        reader.onload = function(e) {
+            var text = e.target.result;
+            var file_text = text.split('\n');
+            file_text = file_text.slice(block.start, block.end);
+            file_text = file_text.map((text, idx) => (block.start + idx).toString().padStart(3) + '  ' + text);
+            var cloneText = file_text.join('\n');
+            var htmlContent = ["<label>",
+                               cloneId,
+                               "</label>",
+                               "<br>",
+                               "<label>",
+                               block.filePath,
+                               "</label>",
+                               "<div style='white-space: pre-line'>",
+                               cloneText,
+                               "</div>"].join('');
+            $(domId).html(htmlContent);
+        };
+    };
+    generateCloneContent(left, '#left-clone');
+    generateCloneContent(right, '#right-clone');
+    var radios = 'Clone Type&nbsp&nbsp'
+               + '<input type="radio" name="clone" value="0" id="clone-0">'
+               + '<label for="clone-0">F</label>&nbsp&nbsp'
+               + '<input type="radio" name="clone" value="1" id="clone-1">'
+               + '<label for="clone-0">T1</label>&nbsp&nbsp'
+               + '<input type="radio" name="clone" value="2" id="clone-2">' 
+               + '<label for="clone-0">T2</label>&nbsp&nbsp'
+               + '<input type="radio" name="clone" value="3" id="clone-3">'
+               + '<label for="clone-0">T3</label>';
+    $('#judgement').html(radios);
+    if (results[currentCloneIdx] !== undefined)
+        $('input[value="' + results[currentCloneIdx] + '"]').prop("checked", true);
+})
+
+$('body').on('change', 'input[name="clone"]', e => {
+    if (currentCloneIdx != -1) {
+        results[currentCloneIdx] = $('input[name="clone"]:checked').val();
+        $("tr[index='" + currentCloneIdx + "']").css('background-color', 'Chartreuse ');
+    }
+})
+
+function saveResult() {
+    var result_text = [];
+    var nums = [0, 0, 0, 0];
+    for (var idx = 0; idx < pairs.length; idx++) {
+        if (!results[idx]) continue;
+        result_text.push(pairs[idx].first.fileId + '-' + pairs[idx].first.blockId + ' : '
+                       + pairs[idx].second.fileId + '-' + pairs[idx].second.blockId + ' : '
+                       + results[idx]);
+        nums[parseInt(results[idx], 10)] += 1;
+    }
+
+    result_text.unshift("#F:" + nums[0] + ", #T1:" + nums[1] + ", #T2:" + nums[2] + ", #T3:" + nums[3]);
+    var textToWrite = result_text.join('\n');
+    var textFileAsBlob = new Blob([textToWrite], {type:'text/plain'});
+    var fileNameToSaveAs = 'SourcererCC_Results';
+
+    var downloadLink = document.createElement("a");
+    downloadLink.download = fileNameToSaveAs;
+    downloadLink.innerHTML = "Download File";
+    if (window.webkitURL != null)
+    {
+        // Chrome allows the link to be clicked
+        // without actually adding it to the DOM.
+        downloadLink.href = window.webkitURL.createObjectURL(textFileAsBlob);
+    }
+    else
+    {
+        // Firefox requires the link to be added to the DOM
+        // before it can be clicked.
+        downloadLink.href = window.URL.createObjectURL(textFileAsBlob);
+        downloadLink.onclick = destroyClickedElement;
+        downloadLink.style.display = "none";
+        document.body.appendChild(downloadLink);
+    }
+
+    downloadLink.click();
+}
+
+function findFile(files, fileName) {
+    for (var key in files) {
+        if (files[key].webkitRelativePath.indexOf(fileName) != -1)
+            return files[key];
+    }
+}
+</script>
