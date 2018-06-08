@@ -111,6 +111,7 @@ $('#upload').change(e => {
         };
         reader.readAsText(file);
     })(stats_file);
+    
 })
 
 $('#clone-table').on('click', '.clone-pair', e => {
@@ -129,7 +130,6 @@ $('#clone-table').on('click', '.clone-pair', e => {
             var text = e.target.result;
             var file_text = text.split('\n');
             file_text = file_text.slice(block.start, block.end);
-            file_text = file_text.map((text, idx) => (block.start + idx).toString().padStart(3) + '  ' + text);
             var cloneText = file_text.join('\n');
             var htmlContent = ["<label>",
                                cloneId,
@@ -138,7 +138,7 @@ $('#clone-table').on('click', '.clone-pair', e => {
                                "<label>",
                                block.filePath,
                                "</label>",
-                               "<div style='white-space: pre-line'>",
+                               "<div style='white-space: pre-wrap'>",
                                cloneText,
                                "</div>"].join('');
             $(domId).html(htmlContent);
