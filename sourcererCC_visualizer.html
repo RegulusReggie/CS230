@@ -47,8 +47,8 @@ $('#upload').change(e => {
     files = e.target.files;
     if (!files.length) return;
     
-    var token_file = findFile(files, 'clone.pairs');
-    var stats_file = findFile(files, 'clone.stats');
+    var token_file = findFile(files, '.pairs');
+    var stats_file = findFile(files, '.stats');
     (function(file) {
         var reader = new FileReader();
         reader.onload = function(e) {
