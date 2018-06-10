@@ -11,6 +11,7 @@
         <div class="row">
             <input id="upload" type="file" multiple directory webkitdirectory>
             <button onclick="saveResult()">Save Result</button>
+            <button onclick="saveAllText()">Save Text</button>
         </div>
         <div class="row">
             <div style="max-height: 90vh; overflow: scroll" class="col-md-3" id="clone-table">
@@ -46,12 +47,12 @@ var pairs;
 $('#upload').change(e => {
     files = e.target.files;
     if (!files.length) return;
-    
     var token_file = findFile(files, '.pairs');
     var stats_file = findFile(files, '.stats');
     var save_file = findFile(files, 'SourcererCC_Results');
 
     (function(file) {
+        if (!file) return;
         var reader = new FileReader();
         reader.onload = function(e) {
             var text = e.target.result;
@@ -109,6 +110,7 @@ $('#upload').change(e => {
     })(token_file);
     
     (function(file) {
+        if (!file) return;
         var reader = new FileReader();
         reader.onload = function(e) {
             var text = e.target.result;
@@ -146,6 +148,7 @@ $('#clone-table').on('click', '.clone-pair', e => {
         var reader = new FileReader();
         var block = fileStats[idTokens[1]]
         var file = findFile(files, block.filePath);
+        if (!file) return;
         reader.readAsText(file);
         reader.onload = function(e) {
             var text = e.target.result;
@@ -216,9 +219,11 @@ function saveResult() {
     }
 
     result_text.unshift("#F:" + nums[0] + ", #T1:" + nums[1] + ", #T2:" + nums[2] + ", #T3:" + nums[3]);
-    var textToWrite = result_text.join('\n');
+    downloadContent(result_text.join('\n'), 'SourcererCC_Results.save');
+}
+
+function downloadContent(textToWrite, fileNameToSaveAs) {
     var textFileAsBlob = new Blob([textToWrite], {type:'text/plain'});
-    var fileNameToSaveAs = 'SourcererCC_Results.save';
 
     var downloadLink = document.createElement("a");
     downloadLink.download = fileNameToSaveAs;
@@ -243,9 +248,9 @@ function saveResult() {
 }
 
 function findFile(files, fileName) {
-    for (var key in files) {
-        if (files[key].webkitRelativePath.indexOf(fileName) != -1)
-            return files[key];
+    for (var i = 0; i < files.length; i++) {
+        if (files[i].webkitRelativePath.indexOf(fileName) != -1)
+            return files[i];
     }
     return null;
 }
@@ -278,4 +283,50 @@ function escapeHtml (string) {
     return entityMap[s];
   });
 }
+
+var textArr;
+function saveAllText() {
+    textArr = [];
+    var counter = 0;
+    for (var i = 0; i < pairs.length; i++) {
+        var pairText = {};
+        textArr.push(pairText);
+        var getFileContent = function(blockId, pairText, idx) {
+            var reader = new FileReader();
+            var block = fileStats[blockId];
+            var file = findFile(files, block.filePath);
+            if (!file) return;
+            reader.readAsText(file);
+            reader.onload = function(e) {
+                var text = e.target.result;
+                var file_text = text.split('\n');
+                file_text = file_text.slice(block.start, block.end + 1);
+                pairText[idx] = file_text.join('\n') + '\n';
+                counter += 1;
+                if (counter == pairs.length * 2) {
+                    var event = new Event('finish');
+                    document.body.dispatchEvent(event);
+                }
+                    
+            };
+        }
+        getFileContent(pairs[i].first.blockId, pairText, 0);
+        getFileContent(pairs[i].second.blockId, pairText, 1);
+    }
+}
+
+document.body.addEventListener('finish', e => {
+    var result_text = [];
+    var dash = "-------------------------------------------\n";
+    for (var i = 0; i < pairs.length; i++) {
+        result_text.push((i + 1).toString() + dash);
+        result_text.push(dash);
+        result_text.push(textArr[i][0]);
+        result_text.push(dash);
+        result_text.push(textArr[i][1]);
+    }
+    downloadContent(result_text.join(''), 'sourcererCC_clone_content.txt');
+
+});
+
 </script>
