@@ -139,7 +139,10 @@ $('#upload').change(e => {
 })
 
 $('#clone-table').on('click', '.clone-pair', e => {
+    if (currentCloneIdx != -1)
+        setTrColor(currentCloneIdx);
     currentCloneIdx = e.currentTarget.getAttribute('index');
+    $('tr[index="' + currentCloneIdx + '"]').css('background-color', 'Gold');
     var clonePairTokens = e.currentTarget.children[0].innerHTML.split(':');
     var left = clonePairTokens[0];
     var right = clonePairTokens[1];
@@ -196,7 +199,6 @@ $('#clone-table').on('click', '.clone-pair', e => {
 $('body').on('change', 'input[name="clone"]', e => {
     if (currentCloneIdx != -1) {
         results[currentCloneIdx] = $('input[name="clone"]:checked').val();
-        setTrColor(currentCloneIdx);
     }
 })
 
@@ -285,6 +287,7 @@ function escapeHtml (string) {
 }
 
 var textArr;
+var freq_map = {};
 function saveAllText() {
     textArr = [];
     var counter = 0;
@@ -301,6 +304,10 @@ function saveAllText() {
                 var text = e.target.result;
                 var file_text = text.split('\n');
                 file_text = file_text.slice(block.start, block.end + 1);
+                if (!freq_map[file_text.length])
+                    freq_map[file_text.length] = 1
+                else
+                    freq_map[file_text.length] += 1
                 pairText[idx] = file_text.join('\n') + '\n';
                 counter += 1;
                 if (counter == pairs.length * 2) {
@@ -317,6 +324,8 @@ function saveAllText() {
 
 document.body.addEventListener('finish', e => {
     var result_text = [];
+    for (var i in freq_map)
+        result_text.push(i + ':' + freq_map[i] + '\n');
     var dash = "-------------------------------------------\n";
     for (var i = 0; i < pairs.length; i++) {
         result_text.push((i + 1).toString() + dash);
