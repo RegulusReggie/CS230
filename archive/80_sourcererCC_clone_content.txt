@@ -1,0 +1,1938 @@
+1-------------------------------------------
+-------------------------------------------
+git_path <- function(git_binary_name = NULL) {
+  # Use user supplied path
+  if (!is.null(git_binary_name)) {
+    if (!file.exists(git_binary_name)) {
+      stop("Path ", git_binary_name, " does not exist", .call = FALSE)
+    }
+    return(git_binary_name)
+  }
+
+  # Look on path
+  git_path <- Sys.which("git")[[1]]
+  if (git_path != "") return(git_path)
+
+  # On Windows, look in common locations
+  if (.Platform$OS.type == "windows") {
+    look_in <- c(
+      "C:/Program Files/Git/bin/git.exe",
+      "C:/Program Files (x86)/Git/bin/git.exe"
+    )
+    found <- file.exists(look_in)
+    if (any(found)) return(look_in[found][1])
+  }
+
+  stop("Git does not seem to be installed on your system.", call. = FALSE)
+}
+-------------------------------------------
+svn_path <- function(svn_binary_name = NULL) {
+  # Use user supplied path
+  if (!is.null(svn_binary_name)) {
+    if (!file.exists(svn_binary_name)) {
+      stop("Path ", svn_binary_name, " does not exist", .call = FALSE)
+    }
+    return(svn_binary_name)
+  }
+
+  # Look on path
+  svn_path <- Sys.which("svn")[[1]]
+  if (svn_path != "") return(svn_path)
+
+  # On Windows, look in common locations
+  if (.Platform$OS.type == "windows") {
+    look_in <- c(
+      "C:/Program Files/Svn/bin/svn.exe",
+      "C:/Program Files (x86)/Svn/bin/svn.exe"
+    )
+    found <- file.exists(look_in)
+    if (any(found)) return(look_in[found][1])
+  }
+
+  stop("SVN does not seem to be installed on your system.", call. = FALSE)
+}
+2-------------------------------------------
+-------------------------------------------
+mutate_each_ <- function(tbl, funs, vars) {
+  msg <- glue(
+    "`mutate_each()` is deprecated.
+     Use `mutate_all()`, `mutate_at()` or `mutate_if()` instead."
+  )
+  if (is_empty(vars)) {
+    inform(glue(msg, "\nTo map `funs` over all variables, use `mutate_all()`"))
+    vars <- tbl_nongroup_vars(tbl)
+  } else {
+    inform(glue(msg, "\nTo map `funs` over a selection of variables, use `mutate_at()`"))
+    vars <- compat_lazy_dots(vars, caller_env())
+    vars <- tidyselect::vars_select(tbl_nongroup_vars(tbl), !!!vars)
+    if (length(vars) == 1 && names(vars) == as_string(vars)) {
+      vars <- unname(vars)
+    }
+  }
+  funs <- manip_apply_syms(funs, syms(vars), tbl)
+  mutate(tbl, !!!funs)
+}
+-------------------------------------------
+summarise_each_ <- function(tbl, funs, vars) {
+  msg <- glue(
+    "`summarise_each()` is deprecated.
+     Use `summarise_all()`, `summarise_at()` or `summarise_if()` instead."
+  )
+  if (is_empty(vars)) {
+    inform(glue(msg, "\nTo map `funs` over all variables, use `summarise_all()`"))
+    vars <- tbl_nongroup_vars(tbl)
+  } else {
+    inform(glue(msg, "\nTo map `funs` over a selection of variables, use `summarise_at()`"))
+    vars <- compat_lazy_dots(vars, caller_env())
+    vars <- tidyselect::vars_select(tbl_nongroup_vars(tbl), !!!vars)
+    if (length(vars) == 1 && names(vars) == as_string(vars)) {
+      vars <- unname(vars)
+    }
+  }
+  if (is_character(funs)) {
+    funs <- funs_(funs)
+  }
+
+  funs <- manip_apply_syms(funs, syms(vars), tbl)
+  summarise(tbl, !!!funs)
+}
+3-------------------------------------------
+-------------------------------------------
+right_join.tbl_df <- function(x, y, by = NULL, copy = FALSE,
+                              suffix = c(".x", ".y"), ...,
+                              na_matches = pkgconfig::get_config("dplyr::na_matches")) {
+  check_valid_names(tbl_vars(x))
+  check_valid_names(tbl_vars(y))
+  by <- common_by(by, x, y)
+  suffix <- check_suffix(suffix)
+  na_matches <- check_na_matches(na_matches)
+
+  y <- auto_copy(x, y, copy = copy)
+
+  vars <- join_vars(tbl_vars(x), tbl_vars(y), by, suffix)
+  by_x <- vars$idx$x$by
+  by_y <- vars$idx$y$by
+  aux_x <- vars$idx$x$aux
+  aux_y <- vars$idx$y$aux
+
+  out <- right_join_impl(x, y, by_x, by_y, aux_x, aux_y, na_matches)
+  names(out) <- vars$alias
+
+  reconstruct_join(out, x, vars)
+}
+-------------------------------------------
+left_join.tbl_df <- function(x, y, by = NULL, copy = FALSE,
+                             suffix = c(".x", ".y"), ...,
+                             na_matches = pkgconfig::get_config("dplyr::na_matches")) {
+  check_valid_names(tbl_vars(x))
+  check_valid_names(tbl_vars(y))
+  by <- common_by(by, x, y)
+  suffix <- check_suffix(suffix)
+  na_matches <- check_na_matches(na_matches)
+
+  y <- auto_copy(x, y, copy = copy)
+
+  vars <- join_vars(tbl_vars(x), tbl_vars(y), by, suffix)
+  by_x <- vars$idx$x$by
+  by_y <- vars$idx$y$by
+  aux_x <- vars$idx$x$aux
+  aux_y <- vars$idx$y$aux
+
+  out <- left_join_impl(x, y, by_x, by_y, aux_x, aux_y, na_matches)
+  names(out) <- vars$alias
+
+  reconstruct_join(out, x, vars)
+}
+4-------------------------------------------
+-------------------------------------------
+full_join.tbl_df <- function(x, y, by = NULL, copy = FALSE,
+                             suffix = c(".x", ".y"), ...,
+                             na_matches = pkgconfig::get_config("dplyr::na_matches")) {
+  check_valid_names(tbl_vars(x))
+  check_valid_names(tbl_vars(y))
+  by <- common_by(by, x, y)
+  suffix <- check_suffix(suffix)
+  na_matches <- check_na_matches(na_matches)
+
+  y <- auto_copy(x, y, copy = copy)
+
+  vars <- join_vars(tbl_vars(x), tbl_vars(y), by, suffix)
+  by_x <- vars$idx$x$by
+  by_y <- vars$idx$y$by
+  aux_x <- vars$idx$x$aux
+  aux_y <- vars$idx$y$aux
+
+  out <- full_join_impl(x, y, by_x, by_y, aux_x, aux_y, na_matches)
+  names(out) <- vars$alias
+
+  reconstruct_join(out, x, vars)
+}
+-------------------------------------------
+left_join.tbl_df <- function(x, y, by = NULL, copy = FALSE,
+                             suffix = c(".x", ".y"), ...,
+                             na_matches = pkgconfig::get_config("dplyr::na_matches")) {
+  check_valid_names(tbl_vars(x))
+  check_valid_names(tbl_vars(y))
+  by <- common_by(by, x, y)
+  suffix <- check_suffix(suffix)
+  na_matches <- check_na_matches(na_matches)
+
+  y <- auto_copy(x, y, copy = copy)
+
+  vars <- join_vars(tbl_vars(x), tbl_vars(y), by, suffix)
+  by_x <- vars$idx$x$by
+  by_y <- vars$idx$y$by
+  aux_x <- vars$idx$x$aux
+  aux_y <- vars$idx$y$aux
+
+  out <- left_join_impl(x, y, by_x, by_y, aux_x, aux_y, na_matches)
+  names(out) <- vars$alias
+
+  reconstruct_join(out, x, vars)
+}
+5-------------------------------------------
+-------------------------------------------
+right_join.tbl_df <- function(x, y, by = NULL, copy = FALSE,
+                              suffix = c(".x", ".y"), ...,
+                              na_matches = pkgconfig::get_config("dplyr::na_matches")) {
+  check_valid_names(tbl_vars(x))
+  check_valid_names(tbl_vars(y))
+  by <- common_by(by, x, y)
+  suffix <- check_suffix(suffix)
+  na_matches <- check_na_matches(na_matches)
+
+  y <- auto_copy(x, y, copy = copy)
+
+  vars <- join_vars(tbl_vars(x), tbl_vars(y), by, suffix)
+  by_x <- vars$idx$x$by
+  by_y <- vars$idx$y$by
+  aux_x <- vars$idx$x$aux
+  aux_y <- vars$idx$y$aux
+
+  out <- right_join_impl(x, y, by_x, by_y, aux_x, aux_y, na_matches)
+  names(out) <- vars$alias
+
+  reconstruct_join(out, x, vars)
+}
+-------------------------------------------
+inner_join.tbl_df <- function(x, y, by = NULL, copy = FALSE,
+                              suffix = c(".x", ".y"), ...,
+                              na_matches = pkgconfig::get_config("dplyr::na_matches")) {
+  check_valid_names(tbl_vars(x))
+  check_valid_names(tbl_vars(y))
+  by <- common_by(by, x, y)
+  suffix <- check_suffix(suffix)
+  na_matches <- check_na_matches(na_matches)
+
+  y <- auto_copy(x, y, copy = copy)
+
+  vars <- join_vars(tbl_vars(x), tbl_vars(y), by, suffix)
+  by_x <- vars$idx$x$by
+  by_y <- vars$idx$y$by
+  aux_x <- vars$idx$x$aux
+  aux_y <- vars$idx$y$aux
+
+  out <- inner_join_impl(x, y, by_x, by_y, aux_x, aux_y, na_matches)
+  names(out) <- vars$alias
+
+  reconstruct_join(out, x, vars)
+}
+6-------------------------------------------
+-------------------------------------------
+full_join.tbl_df <- function(x, y, by = NULL, copy = FALSE,
+                             suffix = c(".x", ".y"), ...,
+                             na_matches = pkgconfig::get_config("dplyr::na_matches")) {
+  check_valid_names(tbl_vars(x))
+  check_valid_names(tbl_vars(y))
+  by <- common_by(by, x, y)
+  suffix <- check_suffix(suffix)
+  na_matches <- check_na_matches(na_matches)
+
+  y <- auto_copy(x, y, copy = copy)
+
+  vars <- join_vars(tbl_vars(x), tbl_vars(y), by, suffix)
+  by_x <- vars$idx$x$by
+  by_y <- vars$idx$y$by
+  aux_x <- vars$idx$x$aux
+  aux_y <- vars$idx$y$aux
+
+  out <- full_join_impl(x, y, by_x, by_y, aux_x, aux_y, na_matches)
+  names(out) <- vars$alias
+
+  reconstruct_join(out, x, vars)
+}
+-------------------------------------------
+inner_join.tbl_df <- function(x, y, by = NULL, copy = FALSE,
+                              suffix = c(".x", ".y"), ...,
+                              na_matches = pkgconfig::get_config("dplyr::na_matches")) {
+  check_valid_names(tbl_vars(x))
+  check_valid_names(tbl_vars(y))
+  by <- common_by(by, x, y)
+  suffix <- check_suffix(suffix)
+  na_matches <- check_na_matches(na_matches)
+
+  y <- auto_copy(x, y, copy = copy)
+
+  vars <- join_vars(tbl_vars(x), tbl_vars(y), by, suffix)
+  by_x <- vars$idx$x$by
+  by_y <- vars$idx$y$by
+  aux_x <- vars$idx$x$aux
+  aux_y <- vars$idx$y$aux
+
+  out <- inner_join_impl(x, y, by_x, by_y, aux_x, aux_y, na_matches)
+  names(out) <- vars$alias
+
+  reconstruct_join(out, x, vars)
+}
+7-------------------------------------------
+-------------------------------------------
+full_join.tbl_df <- function(x, y, by = NULL, copy = FALSE,
+                             suffix = c(".x", ".y"), ...,
+                             na_matches = pkgconfig::get_config("dplyr::na_matches")) {
+  check_valid_names(tbl_vars(x))
+  check_valid_names(tbl_vars(y))
+  by <- common_by(by, x, y)
+  suffix <- check_suffix(suffix)
+  na_matches <- check_na_matches(na_matches)
+
+  y <- auto_copy(x, y, copy = copy)
+
+  vars <- join_vars(tbl_vars(x), tbl_vars(y), by, suffix)
+  by_x <- vars$idx$x$by
+  by_y <- vars$idx$y$by
+  aux_x <- vars$idx$x$aux
+  aux_y <- vars$idx$y$aux
+
+  out <- full_join_impl(x, y, by_x, by_y, aux_x, aux_y, na_matches)
+  names(out) <- vars$alias
+
+  reconstruct_join(out, x, vars)
+}
+-------------------------------------------
+right_join.tbl_df <- function(x, y, by = NULL, copy = FALSE,
+                              suffix = c(".x", ".y"), ...,
+                              na_matches = pkgconfig::get_config("dplyr::na_matches")) {
+  check_valid_names(tbl_vars(x))
+  check_valid_names(tbl_vars(y))
+  by <- common_by(by, x, y)
+  suffix <- check_suffix(suffix)
+  na_matches <- check_na_matches(na_matches)
+
+  y <- auto_copy(x, y, copy = copy)
+
+  vars <- join_vars(tbl_vars(x), tbl_vars(y), by, suffix)
+  by_x <- vars$idx$x$by
+  by_y <- vars$idx$y$by
+  aux_x <- vars$idx$x$aux
+  aux_y <- vars$idx$y$aux
+
+  out <- right_join_impl(x, y, by_x, by_y, aux_x, aux_y, na_matches)
+  names(out) <- vars$alias
+
+  reconstruct_join(out, x, vars)
+}
+8-------------------------------------------
+-------------------------------------------
+left_join.tbl_df <- function(x, y, by = NULL, copy = FALSE,
+                             suffix = c(".x", ".y"), ...,
+                             na_matches = pkgconfig::get_config("dplyr::na_matches")) {
+  check_valid_names(tbl_vars(x))
+  check_valid_names(tbl_vars(y))
+  by <- common_by(by, x, y)
+  suffix <- check_suffix(suffix)
+  na_matches <- check_na_matches(na_matches)
+
+  y <- auto_copy(x, y, copy = copy)
+
+  vars <- join_vars(tbl_vars(x), tbl_vars(y), by, suffix)
+  by_x <- vars$idx$x$by
+  by_y <- vars$idx$y$by
+  aux_x <- vars$idx$x$aux
+  aux_y <- vars$idx$y$aux
+
+  out <- left_join_impl(x, y, by_x, by_y, aux_x, aux_y, na_matches)
+  names(out) <- vars$alias
+
+  reconstruct_join(out, x, vars)
+}
+-------------------------------------------
+inner_join.tbl_df <- function(x, y, by = NULL, copy = FALSE,
+                              suffix = c(".x", ".y"), ...,
+                              na_matches = pkgconfig::get_config("dplyr::na_matches")) {
+  check_valid_names(tbl_vars(x))
+  check_valid_names(tbl_vars(y))
+  by <- common_by(by, x, y)
+  suffix <- check_suffix(suffix)
+  na_matches <- check_na_matches(na_matches)
+
+  y <- auto_copy(x, y, copy = copy)
+
+  vars <- join_vars(tbl_vars(x), tbl_vars(y), by, suffix)
+  by_x <- vars$idx$x$by
+  by_y <- vars$idx$y$by
+  aux_x <- vars$idx$x$aux
+  aux_y <- vars$idx$y$aux
+
+  out <- inner_join_impl(x, y, by_x, by_y, aux_x, aux_y, na_matches)
+  names(out) <- vars$alias
+
+  reconstruct_join(out, x, vars)
+}
+9-------------------------------------------
+-------------------------------------------
+  render_fg = function(self, scale_details, theme) {
+    if (is.null(scale_details$theta.major)) {
+      return(element_render(theme, "panel.border"))
+    }
+
+    theta <- theta_rescale(self, scale_details$theta.major, scale_details)
+    labels <- scale_details$theta.labels
+
+    # Combine the two ends of the scale if they are close
+    theta <- theta[!is.na(theta)]
+    ends_apart <- (theta[length(theta)] - theta[1]) %% (2*pi)
+    if (length(theta) > 0 && ends_apart < 0.05) {
+      n <- length(labels)
+      if (is.expression(labels)) {
+        combined <- substitute(paste(a, "/", b),
+          list(a = labels[[1]], b = labels[[n]]))
+      } else {
+        combined <- paste(labels[1], labels[n], sep = "/")
+      }
+      labels[[n]] <- combined
+      labels <- labels[-1]
+      theta <- theta[-1]
+    }
+
+    grobTree(
+      if (length(labels) > 0) element_render(
+        theme, "axis.text.x",
+        labels,
+        unit(0.45 * sin(theta) + 0.5, "native"),
+        unit(0.45 * cos(theta) + 0.5, "native"),
+        hjust = 0.5, vjust = 0.5
+      ),
+      element_render(theme, "panel.border")
+    )
+  },
+-------------------------------------------
+  render_fg = function(self, scale_details, theme) {
+    if (is.null(scale_details$theta.major)) {
+      return(element_render(theme, "panel.border"))
+    }
+
+    theta <- theta_rescale(self, scale_details$theta.major, scale_details)
+    labels <- scale_details$theta.labels
+
+    # Combine the two ends of the scale if they are close
+    theta <- theta[!is.na(theta)]
+    ends_apart <- (theta[length(theta)] - theta[1]) %% (2 * pi)
+    if (length(theta) > 0 && ends_apart < 0.05) {
+      n <- length(labels)
+      if (is.expression(labels)) {
+        combined <- substitute(paste(a, "/", b),
+          list(a = labels[[1]], b = labels[[n]]))
+      } else {
+        combined <- paste(labels[1], labels[n], sep = "/")
+      }
+      labels[[n]] <- combined
+      labels <- labels[-1]
+      theta <- theta[-1]
+    }
+
+    grobTree(
+      if (length(labels) > 0) element_render(
+        theme, "axis.text.x",
+        labels, 0.45 * sin(theta) + 0.5, 0.45 * cos(theta) + 0.5,
+        hjust = 0.5, vjust = 0.5,
+        default.units = "native"
+      ),
+      element_render(theme, "panel.border")
+    )
+  },
+10-------------------------------------------
+-------------------------------------------
+  draw_panel = function(data, panel_scales, coord, height = NULL) {
+    GeomPath$draw_panel(data.frame(
+      x = as.vector(rbind(data$xmax, data$xmax, NA, data$xmax, data$xmin, NA, data$xmin, data$xmin)),
+      y = as.vector(rbind(data$ymin, data$ymax, NA, data$y,    data$y,    NA, data$ymin, data$ymax)),
+      colour = rep(data$colour, each = 8),
+      alpha = rep(data$alpha, each = 8),
+      size = rep(data$size, each = 8),
+      linetype = rep(data$linetype, each = 8),
+      group = rep(1:(nrow(data)), each = 8),
+      stringsAsFactors = FALSE,
+      row.names = 1:(nrow(data) * 8)
+    ), panel_scales, coord)
+  }
+-------------------------------------------
+  draw_panel = function(data, panel_scales, coord, width = NULL) {
+    GeomPath$draw_panel(data.frame(
+      x = as.vector(rbind(data$xmin, data$xmax, NA, data$x,    data$x,    NA, data$xmin, data$xmax)),
+      y = as.vector(rbind(data$ymax, data$ymax, NA, data$ymax, data$ymin, NA, data$ymin, data$ymin)),
+      colour = rep(data$colour, each = 8),
+      alpha = rep(data$alpha, each = 8),
+      size = rep(data$size, each = 8),
+      linetype = rep(data$linetype, each = 8),
+      group = rep(1:(nrow(data)), each = 8),
+      stringsAsFactors = FALSE,
+      row.names = 1:(nrow(data) * 8)
+    ), panel_scales, coord)
+  }
+11-------------------------------------------
+-------------------------------------------
+scale_fill_distiller <- function(..., type = "seq", palette = 1, direction = -1, values = NULL, space = "Lab", na.value = "grey50", guide = "colourbar") {
+  type <- match.arg(type, c("seq", "div", "qual"))
+  if (type == "qual") {
+    warning("Using a discrete colour palette in a continuous scale.\n  Consider using type = \"seq\" or type = \"div\" instead", call. = FALSE)
+  }
+  continuous_scale("fill", "distiller",
+    gradient_n_pal(brewer_pal(type, palette, direction)(6), values, space), na.value = na.value, guide = guide, ...)
+}
+-------------------------------------------
+scale_colour_distiller <- function(..., type = "seq", palette = 1, direction = -1, values = NULL, space = "Lab", na.value = "grey50", guide = "colourbar") {
+  # warn about using a qualitative brewer palette to generate the gradient
+  type <- match.arg(type, c("seq", "div", "qual"))
+  if (type == "qual") {
+    warning("Using a discrete colour palette in a continuous scale.\n  Consider using type = \"seq\" or type = \"div\" instead", call. = FALSE)
+  }
+  continuous_scale("colour", "distiller",
+    gradient_n_pal(brewer_pal(type, palette, direction)(6), values, space), na.value = na.value, guide = guide, ...)
+  # NB: 6 colours per palette gives nice gradients; more results in more saturated colours which do not look as good
+}
+12-------------------------------------------
+-------------------------------------------
+  compute_group = function(data, scales, binwidth = NULL, bins = 30,
+                           breaks = NULL, origin = NULL, drop = TRUE,
+                           fun = "mean", fun.args = list()) {
+    origin <- dual_param(origin, list(NULL, NULL))
+    binwidth <- dual_param(binwidth, list(NULL, NULL))
+    breaks <- dual_param(breaks, list(NULL, NULL))
+    bins <- dual_param(bins, list(x = 30, y = 30))
+
+    xbreaks <- bin2d_breaks(scales$x, breaks$x, origin$x, binwidth$x, bins$x)
+    ybreaks <- bin2d_breaks(scales$y, breaks$y, origin$y, binwidth$y, bins$y)
+
+    xbin <- cut(data$x, xbreaks, include.lowest = TRUE, labels = FALSE)
+    ybin <- cut(data$y, ybreaks, include.lowest = TRUE, labels = FALSE)
+
+    f <- function(x) {
+      do.call(fun, c(list(quote(x)), fun.args))
+    }
+    out <- tapply_df(data$z, list(xbin = xbin, ybin = ybin), f, drop = drop)
+
+    xdim <- bin_loc(xbreaks, out$xbin)
+    out$x <- xdim$mid
+    out$width <- xdim$length
+
+    ydim <- bin_loc(ybreaks, out$ybin)
+    out$y <- ydim$mid
+    out$height <- ydim$length
+
+    out
+  }
+-------------------------------------------
+  compute_group = function(data, scales, binwidth = NULL, bins = 30,
+                           breaks = NULL, origin = NULL, drop = TRUE) {
+
+    origin <- dual_param(origin, list(NULL, NULL))
+    binwidth <- dual_param(binwidth, list(NULL, NULL))
+    breaks <- dual_param(breaks, list(NULL, NULL))
+    bins <- dual_param(bins, list(x = 30, y = 30))
+
+    xbreaks <- bin2d_breaks(scales$x, breaks$x, origin$x, binwidth$x, bins$x)
+    ybreaks <- bin2d_breaks(scales$y, breaks$y, origin$y, binwidth$y, bins$y)
+
+    xbin <- cut(data$x, xbreaks, include.lowest = TRUE, labels = FALSE)
+    ybin <- cut(data$y, ybreaks, include.lowest = TRUE, labels = FALSE)
+
+    if (is.null(data$weight))
+      data$weight <- 1
+
+    out <- tapply_df(data$weight, list(xbin = xbin, ybin = ybin), sum, drop = drop)
+
+    xdim <- bin_loc(xbreaks, out$xbin)
+    out$x <- xdim$mid
+    out$width <- xdim$length
+
+    ydim <- bin_loc(ybreaks, out$ybin)
+    out$y <- ydim$mid
+    out$height <- ydim$length
+
+    out$count <- out$value
+    out$density <- out$count / sum(out$count, na.rm = TRUE)
+    out
+  }
+13-------------------------------------------
+-------------------------------------------
+stat_summary <- function(mapping = NULL, data = NULL,
+                         geom = "pointrange", position = "identity",
+                         ...,
+                         fun.data = NULL,
+                         fun.y = NULL,
+                         fun.ymax = NULL,
+                         fun.ymin = NULL,
+                         fun.args = list(),
+                         na.rm = FALSE,
+                         show.legend = NA,
+                         inherit.aes = TRUE) {
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = StatSummary,
+    geom = geom,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      fun.data = fun.data,
+      fun.y = fun.y,
+      fun.ymax = fun.ymax,
+      fun.ymin = fun.ymin,
+      fun.args = fun.args,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+-------------------------------------------
+stat_summary_bin <- function(mapping = NULL, data = NULL,
+                             geom = "pointrange", position = "identity",
+                             ...,
+                             fun.data = NULL,
+                             fun.y = NULL,
+                             fun.ymax = NULL,
+                             fun.ymin = NULL,
+                             fun.args = list(),
+                             na.rm = FALSE,
+                             show.legend = NA,
+                             inherit.aes = TRUE) {
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = StatSummaryBin,
+    geom = geom,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      fun.data = fun.data,
+      fun.y = fun.y,
+      fun.ymax = fun.ymax,
+      fun.ymin = fun.ymin,
+      fun.args = fun.args,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+14-------------------------------------------
+-------------------------------------------
+stat_summary_hex <- function(mapping = NULL, data = NULL,
+                             geom = "hex", position = "identity",
+                             ...,
+                             bins = 30,
+                             binwidth = NULL,
+                             drop = TRUE,
+                             fun = "mean",
+                             fun.args = list(),
+                             na.rm = FALSE,
+                             show.legend = NA,
+                             inherit.aes = TRUE) {
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = StatSummaryHex,
+    geom = geom,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      bins = bins,
+      binwidth = binwidth,
+      drop = drop,
+      fun = fun,
+      fun.args = fun.args,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+-------------------------------------------
+stat_summary_2d <- function(mapping = NULL, data = NULL,
+                            geom = "tile", position = "identity",
+                            ...,
+                            bins = 30,
+                            binwidth = NULL,
+                            drop = TRUE,
+                            fun = "mean",
+                            fun.args = list(),
+                            na.rm = FALSE,
+                            show.legend = NA,
+                            inherit.aes = TRUE) {
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = StatSummary2d,
+    geom = geom,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      bins = bins,
+      binwidth = binwidth,
+      drop = drop,
+      fun = fun,
+      fun.args = fun.args,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+15-------------------------------------------
+-------------------------------------------
+theme_light <- function(base_size = 12, base_family = "") {
+  half_line <- base_size / 2
+  # Starts with theme_grey and then modify some parts
+  theme_grey(base_size = base_size, base_family = base_family) %+replace%
+    theme(
+      axis.ticks        = element_line(colour = "grey70", size = 0.25),
+      legend.key        = element_rect(fill = "white", colour = "grey50", size = 0.25),
+      panel.background  = element_rect(fill = "white", colour = NA),
+      panel.border      = element_rect(fill = NA, colour = "grey70", size = 0.5),
+      panel.grid.major  = element_line(colour = "grey85", size = 0.25),
+      panel.grid.minor  = element_line(colour = "grey93", size = 0.125),
+      strip.background  = element_rect(fill = "grey70", colour = NA),
+      strip.text.x      = element_text(
+        colour = "white",
+        margin = margin(t = half_line, b = half_line)
+      ),
+      strip.text.y      = element_text(
+        colour = "white",
+        angle = -90,
+        margin = margin(l = half_line, r = half_line)
+      )
+    )
+
+}
+-------------------------------------------
+theme_linedraw <- function(base_size = 12, base_family = "") {
+  half_line <- base_size / 2
+  # Starts with theme_grey and then modify some parts
+  theme_grey(base_size = base_size, base_family = base_family) %+replace%
+    theme(
+      axis.text         = element_text(colour = "black", size = rel(0.8)),
+      axis.ticks        = element_line(colour = "black", size = 0.25),
+      legend.key        = element_rect(colour = "black", size = 0.25),
+      panel.background  = element_rect(fill = "white", colour = NA),
+      panel.border      = element_rect(fill = NA, colour = "black", size = 0.5),
+      panel.grid.major  = element_line(colour = "black", size = 0.05),
+      panel.grid.minor  = element_line(colour = "black", size = 0.01),
+      strip.background  = element_rect(fill = "black", colour = NA),
+      strip.text.x      = element_text(
+                            colour = "white",
+                            margin = margin(t = half_line, b = half_line)
+                          ),
+      strip.text.y      = element_text(
+                            colour = "white",
+                            angle = 90,
+                            margin = margin(l = half_line, r = half_line)
+                          )
+    )
+}
+16-------------------------------------------
+-------------------------------------------
+theme_dark <- function(base_size = 12, base_family = "") {
+  half_line <- base_size / 2
+  # Starts with theme_grey and then modify some parts
+  theme_grey(base_size = base_size, base_family = base_family) %+replace%
+    theme(
+      axis.ticks        = element_line(colour = "grey40", size = 0.25),
+      legend.key        = element_rect(fill = "grey50", colour = "grey40", size = 0.25),
+      panel.background  = element_rect(fill = "grey50", colour = NA),
+      panel.grid.major  = element_line(colour = "grey40", size = 0.25),
+      panel.grid.minor  = element_line(colour = "grey45", size = 0.125),
+      strip.background  = element_rect(fill = "grey20", colour = NA),
+      strip.text.x      = element_text(
+        colour = "white",
+        margin = margin(t = half_line, b = half_line)
+      ),
+      strip.text.y      = element_text(
+        colour = "white",
+        angle = -90,
+        margin = margin(l = half_line, r = half_line)
+      )
+    )
+}
+-------------------------------------------
+theme_light <- function(base_size = 12, base_family = "") {
+  half_line <- base_size / 2
+  # Starts with theme_grey and then modify some parts
+  theme_grey(base_size = base_size, base_family = base_family) %+replace%
+    theme(
+      axis.ticks        = element_line(colour = "grey70", size = 0.25),
+      legend.key        = element_rect(fill = "white", colour = "grey50", size = 0.25),
+      panel.background  = element_rect(fill = "white", colour = NA),
+      panel.border      = element_rect(fill = NA, colour = "grey70", size = 0.5),
+      panel.grid.major  = element_line(colour = "grey85", size = 0.25),
+      panel.grid.minor  = element_line(colour = "grey93", size = 0.125),
+      strip.background  = element_rect(fill = "grey70", colour = NA),
+      strip.text.x      = element_text(
+        colour = "white",
+        margin = margin(t = half_line, b = half_line)
+      ),
+      strip.text.y      = element_text(
+        colour = "white",
+        angle = -90,
+        margin = margin(l = half_line, r = half_line)
+      )
+    )
+
+}
+17-------------------------------------------
+-------------------------------------------
+add_text <- function(p, x = NULL, y = NULL, z = NULL, text = NULL, ...,
+                     data = NULL, inherit = TRUE) {
+  if (inherit) {
+    x <- x %||% p$x$attrs[[1]][["x"]]
+    y <- y %||% p$x$attrs[[1]][["y"]]
+    z <- z %||% p$x$attrs[[1]][["z"]]
+    text <- text %||% p$x$attrs[[1]][["text"]]
+  }
+  if (is.null(x) || is.null(y) || is.null(text)) {
+    stop("Must supply `x`, `y` and `text` attributes", call. = FALSE)
+  }
+  type <- if (!is.null(z)) "scatter3d" else "scatter"
+  add_trace(p, x = x, y = y, z = z, text = text, type = type, mode = "text", 
+            ..., data = data, inherit = inherit)
+}
+-------------------------------------------
+add_markers <- function(p, x = NULL, y = NULL, z = NULL, ..., 
+                        data = NULL, inherit = TRUE) {
+  if (inherit) {
+    x <- x %||% p$x$attrs[[1]][["x"]]
+    y <- y %||% p$x$attrs[[1]][["y"]]
+    z <- z %||% p$x$attrs[[1]][["z"]]
+  }
+  if (is.null(x) || is.null(y)) {
+    stop("Must supply `x` and `y` attributes", call. = FALSE)
+  }
+  type <- if (!is.null(z)) "scatter3d" else "scatter"
+  add_trace(
+    p, x = x, y = y, z = z, type = type, mode = "markers", ...,
+    data = data, inherit = inherit
+  )
+}
+18-------------------------------------------
+-------------------------------------------
+add_paths <- function(p, x = NULL, y = NULL, z = NULL, ...,
+                      data = NULL, inherit = TRUE) {
+  if (inherit) {
+    x <- x %||% p$x$attrs[[1]][["x"]]
+    y <- y %||% p$x$attrs[[1]][["y"]]
+    z <- z %||% p$x$attrs[[1]][["z"]]
+  }
+  if (is.null(x) || is.null(y)) {
+    stop("Must supply `x` and `y` attributes", call. = FALSE)
+  }
+  type <- if (!is.null(z)) "scatter3d" else "scatter"
+  add_trace_classed(
+    p, x = x, y = y, z = z, class = "plotly_path", type = type, mode = "lines", 
+    ..., data = data, inherit = inherit
+  )
+}
+-------------------------------------------
+add_markers <- function(p, x = NULL, y = NULL, z = NULL, ..., 
+                        data = NULL, inherit = TRUE) {
+  if (inherit) {
+    x <- x %||% p$x$attrs[[1]][["x"]]
+    y <- y %||% p$x$attrs[[1]][["y"]]
+    z <- z %||% p$x$attrs[[1]][["z"]]
+  }
+  if (is.null(x) || is.null(y)) {
+    stop("Must supply `x` and `y` attributes", call. = FALSE)
+  }
+  type <- if (!is.null(z)) "scatter3d" else "scatter"
+  add_trace(
+    p, x = x, y = y, z = z, type = type, mode = "markers", ...,
+    data = data, inherit = inherit
+  )
+}
+19-------------------------------------------
+-------------------------------------------
+add_paths <- function(p, x = NULL, y = NULL, z = NULL, ...,
+                      data = NULL, inherit = TRUE) {
+  if (inherit) {
+    x <- x %||% p$x$attrs[[1]][["x"]]
+    y <- y %||% p$x$attrs[[1]][["y"]]
+    z <- z %||% p$x$attrs[[1]][["z"]]
+  }
+  if (is.null(x) || is.null(y)) {
+    stop("Must supply `x` and `y` attributes", call. = FALSE)
+  }
+  type <- if (!is.null(z)) "scatter3d" else "scatter"
+  add_trace_classed(
+    p, x = x, y = y, z = z, class = "plotly_path", type = type, mode = "lines", 
+    ..., data = data, inherit = inherit
+  )
+}
+-------------------------------------------
+add_text <- function(p, x = NULL, y = NULL, z = NULL, text = NULL, ...,
+                     data = NULL, inherit = TRUE) {
+  if (inherit) {
+    x <- x %||% p$x$attrs[[1]][["x"]]
+    y <- y %||% p$x$attrs[[1]][["y"]]
+    z <- z %||% p$x$attrs[[1]][["z"]]
+    text <- text %||% p$x$attrs[[1]][["text"]]
+  }
+  if (is.null(x) || is.null(y) || is.null(text)) {
+    stop("Must supply `x`, `y` and `text` attributes", call. = FALSE)
+  }
+  type <- if (!is.null(z)) "scatter3d" else "scatter"
+  add_trace(p, x = x, y = y, z = z, text = text, type = type, mode = "text", 
+            ..., data = data, inherit = inherit)
+}
+20-------------------------------------------
+-------------------------------------------
+add_histogram2dcontour <- function(p, x = NULL, y = NULL, z = NULL, ...,
+                                   data = NULL, inherit = TRUE) {
+  if (inherit) {
+    x <- x %||% p$x$attrs[[1]][["x"]]
+    y <- y %||% p$x$attrs[[1]][["y"]]
+    z <- z %||% p$x$attrs[[1]][["z"]]
+  }
+  if (is.null(z)) {
+    if (is.null(x) || is.null(y)) {
+      stop("Must supply both `x` and `y` attributes if `z` is NULL", call. = FALSE)
+    }
+  }
+  # TODO: provide type checking in plotly_build for this trace type
+  add_trace_classed(
+    p, class = "plotly_histogram2dcontour", x = x, y = y, z = z,
+    type = "histogram2dcontour",  ..., data = data, inherit = inherit
+  )
+}
+-------------------------------------------
+add_markers <- function(p, x = NULL, y = NULL, z = NULL, ..., 
+                        data = NULL, inherit = TRUE) {
+  if (inherit) {
+    x <- x %||% p$x$attrs[[1]][["x"]]
+    y <- y %||% p$x$attrs[[1]][["y"]]
+    z <- z %||% p$x$attrs[[1]][["z"]]
+  }
+  if (is.null(x) || is.null(y)) {
+    stop("Must supply `x` and `y` attributes", call. = FALSE)
+  }
+  type <- if (!is.null(z)) "scatter3d" else "scatter"
+  add_trace(
+    p, x = x, y = y, z = z, type = type, mode = "markers", ...,
+    data = data, inherit = inherit
+  )
+}
+21-------------------------------------------
+-------------------------------------------
+add_histogram2dcontour <- function(p, x = NULL, y = NULL, z = NULL, ...,
+                                   data = NULL, inherit = TRUE) {
+  if (inherit) {
+    x <- x %||% p$x$attrs[[1]][["x"]]
+    y <- y %||% p$x$attrs[[1]][["y"]]
+    z <- z %||% p$x$attrs[[1]][["z"]]
+  }
+  if (is.null(z)) {
+    if (is.null(x) || is.null(y)) {
+      stop("Must supply both `x` and `y` attributes if `z` is NULL", call. = FALSE)
+    }
+  }
+  # TODO: provide type checking in plotly_build for this trace type
+  add_trace_classed(
+    p, class = "plotly_histogram2dcontour", x = x, y = y, z = z,
+    type = "histogram2dcontour",  ..., data = data, inherit = inherit
+  )
+}
+-------------------------------------------
+add_lines <- function(p, x = NULL, y = NULL, z = NULL, ...,
+                      data = NULL, inherit = TRUE) {
+  if (inherit) {
+    x <- x %||% p$x$attrs[[1]][["x"]]
+    y <- y %||% p$x$attrs[[1]][["y"]]
+    z <- z %||% p$x$attrs[[1]][["z"]]
+  }
+  if (is.null(x) || is.null(y)) {
+    stop("Must supply `x` and `y` attributes", call. = FALSE)
+  }
+  type <- if (!is.null(z)) "scatter3d" else "scatter"
+  add_trace_classed(
+    p, x = x, y = y, class = "plotly_line", type = type, mode = "lines", 
+    ..., data = data, inherit = inherit
+  )
+}
+22-------------------------------------------
+-------------------------------------------
+add_histogram2dcontour <- function(p, x = NULL, y = NULL, z = NULL, ...,
+                                   data = NULL, inherit = TRUE) {
+  if (inherit) {
+    x <- x %||% p$x$attrs[[1]][["x"]]
+    y <- y %||% p$x$attrs[[1]][["y"]]
+    z <- z %||% p$x$attrs[[1]][["z"]]
+  }
+  if (is.null(z)) {
+    if (is.null(x) || is.null(y)) {
+      stop("Must supply both `x` and `y` attributes if `z` is NULL", call. = FALSE)
+    }
+  }
+  # TODO: provide type checking in plotly_build for this trace type
+  add_trace_classed(
+    p, class = "plotly_histogram2dcontour", x = x, y = y, z = z,
+    type = "histogram2dcontour",  ..., data = data, inherit = inherit
+  )
+}
+-------------------------------------------
+add_paths <- function(p, x = NULL, y = NULL, z = NULL, ...,
+                      data = NULL, inherit = TRUE) {
+  if (inherit) {
+    x <- x %||% p$x$attrs[[1]][["x"]]
+    y <- y %||% p$x$attrs[[1]][["y"]]
+    z <- z %||% p$x$attrs[[1]][["z"]]
+  }
+  if (is.null(x) || is.null(y)) {
+    stop("Must supply `x` and `y` attributes", call. = FALSE)
+  }
+  type <- if (!is.null(z)) "scatter3d" else "scatter"
+  add_trace_classed(
+    p, x = x, y = y, z = z, class = "plotly_path", type = type, mode = "lines", 
+    ..., data = data, inherit = inherit
+  )
+}
+23-------------------------------------------
+-------------------------------------------
+add_histogram2dcontour <- function(p, x = NULL, y = NULL, z = NULL, ...,
+                                   data = NULL, inherit = TRUE) {
+  if (inherit) {
+    x <- x %||% p$x$attrs[[1]][["x"]]
+    y <- y %||% p$x$attrs[[1]][["y"]]
+    z <- z %||% p$x$attrs[[1]][["z"]]
+  }
+  if (is.null(z)) {
+    if (is.null(x) || is.null(y)) {
+      stop("Must supply both `x` and `y` attributes if `z` is NULL", call. = FALSE)
+    }
+  }
+  # TODO: provide type checking in plotly_build for this trace type
+  add_trace_classed(
+    p, class = "plotly_histogram2dcontour", x = x, y = y, z = z,
+    type = "histogram2dcontour",  ..., data = data, inherit = inherit
+  )
+}
+-------------------------------------------
+add_histogram2d <- function(p, x = NULL, y = NULL, z = NULL, ...,
+                            data = NULL, inherit = TRUE) {
+  if (inherit) {
+    x <- x %||% p$x$attrs[[1]][["x"]]
+    y <- y %||% p$x$attrs[[1]][["y"]]
+    z <- z %||% p$x$attrs[[1]][["z"]]
+  }
+  if (is.null(z)) {
+    if (is.null(x) || is.null(y)) {
+      stop("Must supply both `x` and `y` attributes if `z` is NULL", call. = FALSE)
+    }
+  }
+  # TODO: provide type checking in plotly_build for this trace type
+  add_trace_classed(
+    p, class = "plotly_histogram2d", x = x, y = y, z = z,
+    type = "histogram2d",  ..., data = data, inherit = inherit
+  )
+}
+24-------------------------------------------
+-------------------------------------------
+add_mesh <- function(p, x = NULL, y = NULL, z = NULL, ..., 
+                        data = NULL, inherit = TRUE) {
+  if (inherit) {
+    x <- x %||% p$x$attrs[[1]][["x"]]
+    y <- y %||% p$x$attrs[[1]][["y"]]
+    z <- z %||% p$x$attrs[[1]][["z"]]
+  }
+  if (is.null(x) || is.null(y) || is.null(z)) {
+    stop("Must supply `x`/`y`/`z` attributes", call. = FALSE)
+  }
+  add_trace_classed(
+    p, class = "plotly_mesh", x = x, y = y, z = z, type = "mesh3d", 
+    ..., data = data, inherit = inherit
+  )
+}
+-------------------------------------------
+add_markers <- function(p, x = NULL, y = NULL, z = NULL, ..., 
+                        data = NULL, inherit = TRUE) {
+  if (inherit) {
+    x <- x %||% p$x$attrs[[1]][["x"]]
+    y <- y %||% p$x$attrs[[1]][["y"]]
+    z <- z %||% p$x$attrs[[1]][["z"]]
+  }
+  if (is.null(x) || is.null(y)) {
+    stop("Must supply `x` and `y` attributes", call. = FALSE)
+  }
+  type <- if (!is.null(z)) "scatter3d" else "scatter"
+  add_trace(
+    p, x = x, y = y, z = z, type = type, mode = "markers", ...,
+    data = data, inherit = inherit
+  )
+}
+25-------------------------------------------
+-------------------------------------------
+add_mesh <- function(p, x = NULL, y = NULL, z = NULL, ..., 
+                        data = NULL, inherit = TRUE) {
+  if (inherit) {
+    x <- x %||% p$x$attrs[[1]][["x"]]
+    y <- y %||% p$x$attrs[[1]][["y"]]
+    z <- z %||% p$x$attrs[[1]][["z"]]
+  }
+  if (is.null(x) || is.null(y) || is.null(z)) {
+    stop("Must supply `x`/`y`/`z` attributes", call. = FALSE)
+  }
+  add_trace_classed(
+    p, class = "plotly_mesh", x = x, y = y, z = z, type = "mesh3d", 
+    ..., data = data, inherit = inherit
+  )
+}
+-------------------------------------------
+add_lines <- function(p, x = NULL, y = NULL, z = NULL, ...,
+                      data = NULL, inherit = TRUE) {
+  if (inherit) {
+    x <- x %||% p$x$attrs[[1]][["x"]]
+    y <- y %||% p$x$attrs[[1]][["y"]]
+    z <- z %||% p$x$attrs[[1]][["z"]]
+  }
+  if (is.null(x) || is.null(y)) {
+    stop("Must supply `x` and `y` attributes", call. = FALSE)
+  }
+  type <- if (!is.null(z)) "scatter3d" else "scatter"
+  add_trace_classed(
+    p, x = x, y = y, class = "plotly_line", type = type, mode = "lines", 
+    ..., data = data, inherit = inherit
+  )
+}
+26-------------------------------------------
+-------------------------------------------
+add_mesh <- function(p, x = NULL, y = NULL, z = NULL, ..., 
+                        data = NULL, inherit = TRUE) {
+  if (inherit) {
+    x <- x %||% p$x$attrs[[1]][["x"]]
+    y <- y %||% p$x$attrs[[1]][["y"]]
+    z <- z %||% p$x$attrs[[1]][["z"]]
+  }
+  if (is.null(x) || is.null(y) || is.null(z)) {
+    stop("Must supply `x`/`y`/`z` attributes", call. = FALSE)
+  }
+  add_trace_classed(
+    p, class = "plotly_mesh", x = x, y = y, z = z, type = "mesh3d", 
+    ..., data = data, inherit = inherit
+  )
+}
+-------------------------------------------
+add_paths <- function(p, x = NULL, y = NULL, z = NULL, ...,
+                      data = NULL, inherit = TRUE) {
+  if (inherit) {
+    x <- x %||% p$x$attrs[[1]][["x"]]
+    y <- y %||% p$x$attrs[[1]][["y"]]
+    z <- z %||% p$x$attrs[[1]][["z"]]
+  }
+  if (is.null(x) || is.null(y)) {
+    stop("Must supply `x` and `y` attributes", call. = FALSE)
+  }
+  type <- if (!is.null(z)) "scatter3d" else "scatter"
+  add_trace_classed(
+    p, x = x, y = y, z = z, class = "plotly_path", type = type, mode = "lines", 
+    ..., data = data, inherit = inherit
+  )
+}
+27-------------------------------------------
+-------------------------------------------
+add_mesh <- function(p, x = NULL, y = NULL, z = NULL, ..., 
+                        data = NULL, inherit = TRUE) {
+  if (inherit) {
+    x <- x %||% p$x$attrs[[1]][["x"]]
+    y <- y %||% p$x$attrs[[1]][["y"]]
+    z <- z %||% p$x$attrs[[1]][["z"]]
+  }
+  if (is.null(x) || is.null(y) || is.null(z)) {
+    stop("Must supply `x`/`y`/`z` attributes", call. = FALSE)
+  }
+  add_trace_classed(
+    p, class = "plotly_mesh", x = x, y = y, z = z, type = "mesh3d", 
+    ..., data = data, inherit = inherit
+  )
+}
+-------------------------------------------
+add_histogram2d <- function(p, x = NULL, y = NULL, z = NULL, ...,
+                            data = NULL, inherit = TRUE) {
+  if (inherit) {
+    x <- x %||% p$x$attrs[[1]][["x"]]
+    y <- y %||% p$x$attrs[[1]][["y"]]
+    z <- z %||% p$x$attrs[[1]][["z"]]
+  }
+  if (is.null(z)) {
+    if (is.null(x) || is.null(y)) {
+      stop("Must supply both `x` and `y` attributes if `z` is NULL", call. = FALSE)
+    }
+  }
+  # TODO: provide type checking in plotly_build for this trace type
+  add_trace_classed(
+    p, class = "plotly_histogram2d", x = x, y = y, z = z,
+    type = "histogram2d",  ..., data = data, inherit = inherit
+  )
+}
+28-------------------------------------------
+-------------------------------------------
+add_mesh <- function(p, x = NULL, y = NULL, z = NULL, ..., 
+                        data = NULL, inherit = TRUE) {
+  if (inherit) {
+    x <- x %||% p$x$attrs[[1]][["x"]]
+    y <- y %||% p$x$attrs[[1]][["y"]]
+    z <- z %||% p$x$attrs[[1]][["z"]]
+  }
+  if (is.null(x) || is.null(y) || is.null(z)) {
+    stop("Must supply `x`/`y`/`z` attributes", call. = FALSE)
+  }
+  add_trace_classed(
+    p, class = "plotly_mesh", x = x, y = y, z = z, type = "mesh3d", 
+    ..., data = data, inherit = inherit
+  )
+}
+-------------------------------------------
+add_histogram2dcontour <- function(p, x = NULL, y = NULL, z = NULL, ...,
+                                   data = NULL, inherit = TRUE) {
+  if (inherit) {
+    x <- x %||% p$x$attrs[[1]][["x"]]
+    y <- y %||% p$x$attrs[[1]][["y"]]
+    z <- z %||% p$x$attrs[[1]][["z"]]
+  }
+  if (is.null(z)) {
+    if (is.null(x) || is.null(y)) {
+      stop("Must supply both `x` and `y` attributes if `z` is NULL", call. = FALSE)
+    }
+  }
+  # TODO: provide type checking in plotly_build for this trace type
+  add_trace_classed(
+    p, class = "plotly_histogram2dcontour", x = x, y = y, z = z,
+    type = "histogram2dcontour",  ..., data = data, inherit = inherit
+  )
+}
+29-------------------------------------------
+-------------------------------------------
+add_lines <- function(p, x = NULL, y = NULL, z = NULL, ...,
+                      data = NULL, inherit = TRUE) {
+  if (inherit) {
+    x <- x %||% p$x$attrs[[1]][["x"]]
+    y <- y %||% p$x$attrs[[1]][["y"]]
+    z <- z %||% p$x$attrs[[1]][["z"]]
+  }
+  if (is.null(x) || is.null(y)) {
+    stop("Must supply `x` and `y` attributes", call. = FALSE)
+  }
+  type <- if (!is.null(z)) "scatter3d" else "scatter"
+  add_trace_classed(
+    p, x = x, y = y, class = "plotly_line", type = type, mode = "lines", 
+    ..., data = data, inherit = inherit
+  )
+}
+-------------------------------------------
+add_markers <- function(p, x = NULL, y = NULL, z = NULL, ..., 
+                        data = NULL, inherit = TRUE) {
+  if (inherit) {
+    x <- x %||% p$x$attrs[[1]][["x"]]
+    y <- y %||% p$x$attrs[[1]][["y"]]
+    z <- z %||% p$x$attrs[[1]][["z"]]
+  }
+  if (is.null(x) || is.null(y)) {
+    stop("Must supply `x` and `y` attributes", call. = FALSE)
+  }
+  type <- if (!is.null(z)) "scatter3d" else "scatter"
+  add_trace(
+    p, x = x, y = y, z = z, type = type, mode = "markers", ...,
+    data = data, inherit = inherit
+  )
+}
+30-------------------------------------------
+-------------------------------------------
+add_lines <- function(p, x = NULL, y = NULL, z = NULL, ...,
+                      data = NULL, inherit = TRUE) {
+  if (inherit) {
+    x <- x %||% p$x$attrs[[1]][["x"]]
+    y <- y %||% p$x$attrs[[1]][["y"]]
+    z <- z %||% p$x$attrs[[1]][["z"]]
+  }
+  if (is.null(x) || is.null(y)) {
+    stop("Must supply `x` and `y` attributes", call. = FALSE)
+  }
+  type <- if (!is.null(z)) "scatter3d" else "scatter"
+  add_trace_classed(
+    p, x = x, y = y, class = "plotly_line", type = type, mode = "lines", 
+    ..., data = data, inherit = inherit
+  )
+}
+-------------------------------------------
+add_paths <- function(p, x = NULL, y = NULL, z = NULL, ...,
+                      data = NULL, inherit = TRUE) {
+  if (inherit) {
+    x <- x %||% p$x$attrs[[1]][["x"]]
+    y <- y %||% p$x$attrs[[1]][["y"]]
+    z <- z %||% p$x$attrs[[1]][["z"]]
+  }
+  if (is.null(x) || is.null(y)) {
+    stop("Must supply `x` and `y` attributes", call. = FALSE)
+  }
+  type <- if (!is.null(z)) "scatter3d" else "scatter"
+  add_trace_classed(
+    p, x = x, y = y, z = z, class = "plotly_path", type = type, mode = "lines", 
+    ..., data = data, inherit = inherit
+  )
+}
+31-------------------------------------------
+-------------------------------------------
+add_histogram2d <- function(p, x = NULL, y = NULL, z = NULL, ...,
+                            data = NULL, inherit = TRUE) {
+  if (inherit) {
+    x <- x %||% p$x$attrs[[1]][["x"]]
+    y <- y %||% p$x$attrs[[1]][["y"]]
+    z <- z %||% p$x$attrs[[1]][["z"]]
+  }
+  if (is.null(z)) {
+    if (is.null(x) || is.null(y)) {
+      stop("Must supply both `x` and `y` attributes if `z` is NULL", call. = FALSE)
+    }
+  }
+  # TODO: provide type checking in plotly_build for this trace type
+  add_trace_classed(
+    p, class = "plotly_histogram2d", x = x, y = y, z = z,
+    type = "histogram2d",  ..., data = data, inherit = inherit
+  )
+}
+-------------------------------------------
+add_lines <- function(p, x = NULL, y = NULL, z = NULL, ...,
+                      data = NULL, inherit = TRUE) {
+  if (inherit) {
+    x <- x %||% p$x$attrs[[1]][["x"]]
+    y <- y %||% p$x$attrs[[1]][["y"]]
+    z <- z %||% p$x$attrs[[1]][["z"]]
+  }
+  if (is.null(x) || is.null(y)) {
+    stop("Must supply `x` and `y` attributes", call. = FALSE)
+  }
+  type <- if (!is.null(z)) "scatter3d" else "scatter"
+  add_trace_classed(
+    p, x = x, y = y, class = "plotly_line", type = type, mode = "lines", 
+    ..., data = data, inherit = inherit
+  )
+}
+32-------------------------------------------
+-------------------------------------------
+add_histogram2d <- function(p, x = NULL, y = NULL, z = NULL, ...,
+                            data = NULL, inherit = TRUE) {
+  if (inherit) {
+    x <- x %||% p$x$attrs[[1]][["x"]]
+    y <- y %||% p$x$attrs[[1]][["y"]]
+    z <- z %||% p$x$attrs[[1]][["z"]]
+  }
+  if (is.null(z)) {
+    if (is.null(x) || is.null(y)) {
+      stop("Must supply both `x` and `y` attributes if `z` is NULL", call. = FALSE)
+    }
+  }
+  # TODO: provide type checking in plotly_build for this trace type
+  add_trace_classed(
+    p, class = "plotly_histogram2d", x = x, y = y, z = z,
+    type = "histogram2d",  ..., data = data, inherit = inherit
+  )
+}
+-------------------------------------------
+add_markers <- function(p, x = NULL, y = NULL, z = NULL, ..., 
+                        data = NULL, inherit = TRUE) {
+  if (inherit) {
+    x <- x %||% p$x$attrs[[1]][["x"]]
+    y <- y %||% p$x$attrs[[1]][["y"]]
+    z <- z %||% p$x$attrs[[1]][["z"]]
+  }
+  if (is.null(x) || is.null(y)) {
+    stop("Must supply `x` and `y` attributes", call. = FALSE)
+  }
+  type <- if (!is.null(z)) "scatter3d" else "scatter"
+  add_trace(
+    p, x = x, y = y, z = z, type = type, mode = "markers", ...,
+    data = data, inherit = inherit
+  )
+}
+33-------------------------------------------
+-------------------------------------------
+add_histogram2d <- function(p, x = NULL, y = NULL, z = NULL, ...,
+                            data = NULL, inherit = TRUE) {
+  if (inherit) {
+    x <- x %||% p$x$attrs[[1]][["x"]]
+    y <- y %||% p$x$attrs[[1]][["y"]]
+    z <- z %||% p$x$attrs[[1]][["z"]]
+  }
+  if (is.null(z)) {
+    if (is.null(x) || is.null(y)) {
+      stop("Must supply both `x` and `y` attributes if `z` is NULL", call. = FALSE)
+    }
+  }
+  # TODO: provide type checking in plotly_build for this trace type
+  add_trace_classed(
+    p, class = "plotly_histogram2d", x = x, y = y, z = z,
+    type = "histogram2d",  ..., data = data, inherit = inherit
+  )
+}
+-------------------------------------------
+add_paths <- function(p, x = NULL, y = NULL, z = NULL, ...,
+                      data = NULL, inherit = TRUE) {
+  if (inherit) {
+    x <- x %||% p$x$attrs[[1]][["x"]]
+    y <- y %||% p$x$attrs[[1]][["y"]]
+    z <- z %||% p$x$attrs[[1]][["z"]]
+  }
+  if (is.null(x) || is.null(y)) {
+    stop("Must supply `x` and `y` attributes", call. = FALSE)
+  }
+  type <- if (!is.null(z)) "scatter3d" else "scatter"
+  add_trace_classed(
+    p, x = x, y = y, z = z, class = "plotly_path", type = type, mode = "lines", 
+    ..., data = data, inherit = inherit
+  )
+}
+34-------------------------------------------
+-------------------------------------------
+    "function(el, x) {
+    
+    var gd = document.getElementById(el.id); 
+    
+    var cnt = 0;
+    
+    function run() {
+    rotate('scene', Math.PI / 180);
+    requestAnimationFrame(run);
+    } 
+    run();
+    
+    function rotate(id, angle) {
+    var scene = gd._fullLayout[id]._scene;
+    var camera = scene.getCamera();
+    
+    var rtz = xyz2rtz(camera.eye);
+    
+    rtz.t += angle;
+    
+    camera.eye = rtz2xyz(rtz);
+    
+    scene.setCamera(camera);
+    }
+    
+    // Math.atan2 will rotate the full 360, but it doesn't render for some reason?
+    function xyz2rtz(xyz) {
+    return {
+    r: Math.sqrt(xyz.x * xyz.x + xyz.y * xyz.y),
+    t: Math.atan(xyz.y / xyz.x),
+    z: xyz.z
+    };
+    }
+    
+    function rtz2xyz(rtz) {
+    return {
+    x: rtz.r * Math.cos(rtz.t),
+    y: rtz.r * Math.sin(rtz.t),
+    z: rtz.z
+    };
+    }
+    
+    }"
+-------------------------------------------
+    "function(el, x) {
+      
+      var gd = document.getElementById(el.id); 
+      
+      var cnt = 0;
+      
+      function run() {
+        rotate('scene', Math.PI / 180);
+        requestAnimationFrame(run);
+      } 
+      run();
+      
+      function rotate(id, angle) {
+        var scene = gd._fullLayout[id]._scene;
+        var camera = scene.getCamera();
+            
+        var rtz = xyz2rtz(camera.eye);
+        
+        rtz.t += angle;
+        
+        camera.eye = rtz2xyz(rtz);
+        
+        scene.setCamera(camera);
+      }
+      
+      // Math.atan2 will rotate the full 360, but it doesn't render for some reason?
+      function xyz2rtz(xyz) {
+        return {
+          r: Math.sqrt(xyz.x * xyz.x + xyz.y * xyz.y),
+          t: Math.atan(xyz.y / xyz.x),
+          z: xyz.z
+        };
+      }
+      
+      function rtz2xyz(rtz) {
+        return {
+          x: rtz.r * Math.cos(rtz.t),
+          y: rtz.r * Math.sin(rtz.t),
+          z: rtz.z
+        };
+      }
+
+    }"
+35-------------------------------------------
+-------------------------------------------
+radioButtons <- function(inputId, label, choices = NULL, selected = NULL,
+  inline = FALSE, width = NULL, choiceNames = NULL, choiceValues = NULL) {
+
+  args <- normalizeChoicesArgs(choices, choiceNames, choiceValues)
+
+  selected <- restoreInput(id = inputId, default = selected)
+
+  # default value if it's not specified
+  selected <- if (is.null(selected)) args$choiceValues[[1]] else as.character(selected)
+
+  if (length(selected) > 1) stop("The 'selected' argument must be of length 1")
+
+  options <- generateOptions(inputId, selected, inline,
+    'radio', args$choiceNames, args$choiceValues)
+
+  divClass <- "form-group shiny-input-radiogroup shiny-input-container"
+  if (inline) divClass <- paste(divClass, "shiny-input-container-inline")
+
+  tags$div(id = inputId,
+    style = if (!is.null(width)) paste0("width: ", validateCssUnit(width), ";"),
+    class = divClass,
+    controlLabel(inputId, label),
+    options
+  )
+}
+-------------------------------------------
+checkboxGroupInput <- function(inputId, label, choices = NULL, selected = NULL,
+  inline = FALSE, width = NULL, choiceNames = NULL, choiceValues = NULL) {
+
+  # keep backward compatibility with Shiny < 1.0.1 (see #1649)
+  if (is.null(choices) && is.null(choiceNames) && is.null(choiceValues)) {
+    choices <- character(0)
+  }
+
+  args <- normalizeChoicesArgs(choices, choiceNames, choiceValues)
+
+  selected <- restoreInput(id = inputId, default = selected)
+
+  # default value if it's not specified
+  if (!is.null(selected)) selected <- as.character(selected)
+
+  options <- generateOptions(inputId, selected, inline,
+    'checkbox', args$choiceNames, args$choiceValues)
+
+  divClass <- "form-group shiny-input-checkboxgroup shiny-input-container"
+  if (inline)
+    divClass <- paste(divClass, "shiny-input-container-inline")
+
+  # return label and select tag
+  tags$div(id = inputId,
+    style = if (!is.null(width)) paste0("width: ", validateCssUnit(width), ";"),
+    class = divClass,
+    controlLabel(inputId, label),
+    options
+  )
+}
+36-------------------------------------------
+-------------------------------------------
+routeWSHandler <- function(prefix, wshandler) {
+  force(prefix)
+  force(wshandler)
+
+  if (identical("", prefix))
+    return(wshandler)
+
+  if (length(prefix) != 1 || !isTRUE(grepl("^/[^\\]+$", prefix))) {
+    stop("Invalid URL prefix \"", prefix, "\"")
+  }
+
+  pathPattern <- paste("^\\Q", prefix, "\\E/", sep = "")
+  function(ws) {
+    req <- ws$request
+    if (isTRUE(grepl(pathPattern, req$PATH_INFO))) {
+      origScript <- req$SCRIPT_NAME
+      origPath <- req$PATH_INFO
+      on.exit({
+        req$SCRIPT_NAME <- origScript
+        req$PATH_INFO <- origPath
+      }, add = TRUE)
+      pathInfo <- substr(req$PATH_INFO, nchar(prefix)+1, nchar(req$PATH_INFO))
+      req$SCRIPT_NAME <- paste(req$SCRIPT_NAME, prefix, sep = "")
+      req$PATH_INFO <- pathInfo
+      return(wshandler(ws))
+    } else {
+      return(NULL)
+    }
+  }
+}
+-------------------------------------------
+routeHandler <- function(prefix, handler) {
+  force(prefix)
+  force(handler)
+
+  if (identical("", prefix))
+    return(handler)
+
+  if (length(prefix) != 1 || !isTRUE(grepl("^/[^\\]+$", prefix))) {
+    stop("Invalid URL prefix \"", prefix, "\"")
+  }
+
+  pathPattern <- paste("^\\Q", prefix, "\\E/", sep = "")
+  function(req) {
+    if (isTRUE(grepl(pathPattern, req$PATH_INFO))) {
+      origScript <- req$SCRIPT_NAME
+      origPath <- req$PATH_INFO
+      on.exit({
+        req$SCRIPT_NAME <- origScript
+        req$PATH_INFO <- origPath
+      }, add = TRUE)
+      pathInfo <- substr(req$PATH_INFO, nchar(prefix)+1, nchar(req$PATH_INFO))
+      req$SCRIPT_NAME <- paste(req$SCRIPT_NAME, prefix, sep = "")
+      req$PATH_INFO <- pathInfo
+      return(handler(req))
+    } else {
+      return(NULL)
+    }
+  }
+}
+37-------------------------------------------
+-------------------------------------------
+rexprSrcrefToLabel <- function(srcref, defaultLabel) {
+  if (is.null(srcref))
+    return(defaultLabel)
+
+  srcfile <- attr(srcref, "srcfile", exact = TRUE)
+  if (is.null(srcfile))
+    return(defaultLabel)
+
+  if (is.null(srcfile$lines))
+    return(defaultLabel)
+
+  lines <- srcfile$lines
+  # When pasting at the Console, srcfile$lines is not split
+  if (length(lines) == 1) {
+    lines <- strsplit(lines, "\n")[[1]]
+  }
+
+  if (length(lines) < srcref[1]) {
+    return(defaultLabel)
+  }
+
+  firstLine <- substring(lines[srcref[1]], 1, srcref[2] - 1)
+
+  m <- regexec("(.*)(<-|=)\\s*reactive\\s*\\($", firstLine)
+  if (m[[1]][1] == -1) {
+    return(defaultLabel)
+  }
+  sym <- regmatches(firstLine, m)[[1]][2]
+  res <- try(parse(text = sym), silent = TRUE)
+  if (inherits(res, "try-error"))
+    return(defaultLabel)
+
+  if (length(res) != 1)
+    return(defaultLabel)
+
+  return(as.character(res))
+}
+-------------------------------------------
+rvalSrcrefToLabel <- function(srcref,
+  defaultLabel = paste0("reactiveVal", createUniqueId(4))) {
+
+  if (is.null(srcref))
+    return(defaultLabel)
+
+  srcfile <- attr(srcref, "srcfile", exact = TRUE)
+  if (is.null(srcfile))
+    return(defaultLabel)
+
+  if (is.null(srcfile$lines))
+    return(defaultLabel)
+
+  lines <- srcfile$lines
+  # When pasting at the Console, srcfile$lines is not split
+  if (length(lines) == 1) {
+    lines <- strsplit(lines, "\n")[[1]]
+  }
+
+  if (length(lines) < srcref[1]) {
+    return(defaultLabel)
+  }
+
+  firstLine <- substring(lines[srcref[1]], srcref[2] - 1)
+
+  m <- regexec("\\s*([^[:space:]]+)\\s*(<-|=)\\s*reactiveVal\\b", firstLine)
+  if (m[[1]][1] == -1) {
+    return(defaultLabel)
+  }
+
+  sym <- regmatches(firstLine, m)[[1]][2]
+  res <- try(parse(text = sym), silent = TRUE)
+  if (inherits(res, "try-error"))
+    return(defaultLabel)
+
+  if (length(res) != 1)
+    return(defaultLabel)
+
+  return(as.character(res))
+}
+38-------------------------------------------
+-------------------------------------------
+resolve <- function(dir, relpath) {
+  abs.path <- file.path(dir, relpath)
+  if (!file.exists(abs.path))
+    return(NULL)
+  abs.path <- normalizePath(abs.path, winslash='/', mustWork=TRUE)
+  dir <- normalizePath(dir, winslash='/', mustWork=TRUE)
+  # trim the possible trailing slash under Windows (#306)
+  if (isWindows()) dir <- sub('/$', '', dir)
+  if (nchar(abs.path) <= nchar(dir) + 1)
+    return(NULL)
+  if (substr(abs.path, 1, nchar(dir)) != dir ||
+      substr(abs.path, nchar(dir)+1, nchar(dir)+1) != '/') {
+    return(NULL)
+  }
+  return(abs.path)
+}
+-------------------------------------------
+resolve_relative <- function(dir, relpath) {
+  abs.path <- file.path(dir, relpath)
+  if (!file.exists(abs.path))
+    return(NULL)
+  abs.path <- normalize_path(abs.path, mustWork = TRUE)
+  dir <- normalize_path(dir, mustWork = TRUE)
+  # trim the possible trailing slash under Windows
+  if (.Platform$OS.type == 'windows') dir <- sub('/$', '', dir)
+  if (nchar(abs.path) <= nchar(dir) + 1)
+    return(NULL)
+  if (substr(abs.path, 1, nchar(dir)) != dir ||
+        substr(abs.path, nchar(dir) + 1, nchar(dir) + 1) != '/') {
+    return(NULL)
+  }
+  return(abs.path)
+}
+39-------------------------------------------
+-------------------------------------------
+psim2 = function(x, y, method = c("cosine", "jaccard"), norm = c("l2", "none")) {
+  method = match.arg(method)
+  norm = match.arg(norm)
+
+  stopifnot(inherits(x, "matrix") || inherits(x, "Matrix"))
+  stopifnot(inherits(y, "matrix") || inherits(y, "Matrix"))
+  stopifnot(ncol(x) == ncol(y))
+  stopifnot(nrow(x) == nrow(y))
+  stopifnot(colnames(x) == colnames(y))
+  RESULT = NULL
+
+  if (method == "cosine") {
+    y = normalize(y, norm)
+    x = normalize(x, norm)
+    RESULT = rowSums(x * y)
+  }
+
+  if (method == "jaccard") {
+    if (!inherits(x, "sparseMatrix"))
+      stop("at the moment jaccard distance defined only for sparse matrices")
+
+    if (norm != "none") {
+      msg = paste(norm, "norm provided. Howewer matrix will be converted to binary (0,1) automatically.")
+      msg = paste(msg, "'jaccard' can be computed only on sets which should be encoded as sparse matrices of 0, 1.")
+      flog.warn(msg)
+    }
+
+    x@x = sign(x@x)
+    y@x = sign(y@x)
+    intrs = rowSums(x * y)
+
+    RESULT = intrs / (rowSums(x) + rowSums(y) - intrs)
+  }
+  RESULT
+}
+-------------------------------------------
+sim2 = function(x, y = NULL, method = c("cosine", "jaccard"),
+                norm = c("l2", "none")) {
+  norm = match.arg(norm)
+  method = match.arg(method)
+  # check first matrix
+  stopifnot(inherits(x, "matrix") || inherits(x, "Matrix"))
+
+  FLAG_TWO_MATRICES_INPUT = FALSE
+  if (!is.null(y)) {
+    FLAG_TWO_MATRICES_INPUT = TRUE
+  }
+  # check second matrix
+  if (FLAG_TWO_MATRICES_INPUT) {
+    stopifnot(inherits(y, "matrix") || inherits(y, "Matrix"))
+    stopifnot(ncol(x) == ncol(y))
+    stopifnot(colnames(x) == colnames(y))
+  }
+
+  RESULT = NULL
+
+  if (method == "cosine") {
+    x = normalize(x, norm)
+    if (FLAG_TWO_MATRICES_INPUT) {
+      y = normalize(y, norm)
+      RESULT = tcrossprod(x, y)
+    }
+    else
+      RESULT = tcrossprod(x)
+  }
+
+  if (method == "jaccard") {
+    if (!inherits(x, "sparseMatrix"))
+      stop("at the moment jaccard distance defined only for sparse matrices")
+
+    if (norm != "none") {
+      msg = paste(norm, "norm provided. Howewer matrix will be converted to binary (0,1) automatically.")
+      msg = paste(msg, "'jaccard' can be computed only on sets which should be encoded as sparse matrices of 0, 1.")
+      flog.warn(msg)
+    }
+    x@x = sign(x@x)
+    if (FLAG_TWO_MATRICES_INPUT) {
+      y@x = sign(y@x)
+    }
+    RESULT = jaccard_sim(x, y)
+  }
+  RESULT
+}
+40-------------------------------------------
+-------------------------------------------
+    pdist2 = function(x, y) {
+      stopifnot( inherits(x, "sparseMatrix") && inherits(y, "sparseMatrix"))
+      stopifnot( ncol(x) == ncol(y) )
+      stopifnot( colnames(x) == colnames(y) )
+      stopifnot( nrow(x) == nrow(y) )
+      # take only words that appear both in word vectors
+      terms = intersect(colnames(x), colnames(private$wv))
+      # make sure we don't have empty string - matrices doesn't allow subsetting by empty string
+      terms = setdiff(terms, "")
+      wv_internal = private$wv[, terms, drop = FALSE]
+
+      x_csr = normalize(x[, terms, drop = FALSE], "l1")
+      x_csr = as(x_csr, private$internal_matrix_format)
+
+      y_csr = normalize(y[, terms, drop = FALSE], "l1")
+      y_csr = as(y_csr, private$internal_matrix_format)
+
+
+      if (self$progressbar)
+        pb = txtProgressBar(initial = 1L, min = 2L, max = length(x_csr@p), style = 3)
+      # preallocate space for result
+      res = rep(Inf,  nrow(x_csr))
+      for (j in 2L:(length(x_csr@p))) {
+        if (self$progressbar) setTxtProgressBar(pb, j)
+        i1 = (x_csr@p[[j - 1]] + 1L):x_csr@p[[j]]
+        j1 = x_csr@j[i1] + 1L
+        m_j1 = wv_internal[ , j1, drop = FALSE]
+        x1 = x_csr@x[i1]
+        i2 = (y_csr@p[[j - 1L]] + 1L):y_csr@p[[j]]
+        j2 = y_csr@j[i2] + 1L
+        m_j2 = wv_internal[ , j2, drop = FALSE]
+        x2 = y_csr@x[i2]
+        res[j - 1L] = private$rwmd(m_j1, m_j2, x1, x2)
+      }
+      if (self$progressbar) close(pb)
+      res
+    }
+-------------------------------------------
+    dist2 = function(x, y) {
+      stopifnot( inherits(x, "sparseMatrix") && inherits(y, "sparseMatrix"))
+      stopifnot( colnames(x) == colnames(y) )
+      # take only words that appear both in word vectors
+      terms = intersect(colnames(x), colnames(private$wv))
+      # make sure we don't have empty string - matrices doesn't allow subsetting by empty string
+      terms = setdiff(terms, "")
+      wv_internal = private$wv[, terms, drop = FALSE]
+      # convert matrices in row-major format
+      x_csr =  normalize(x[, terms, drop = FALSE], "l1")
+      x_csr =  as(x_csr, private$internal_matrix_format)
+
+      y_csr = normalize(y[, terms, drop = FALSE], "l1")
+      y_csr = as(y_csr, private$internal_matrix_format)
+
+      if (self$progressbar)
+        pb = txtProgressBar(initial = 1L, min = 2L, max = length(x_csr@p), style = 3)
+      # preallocate resulting matrix
+      res = matrix(Inf, nrow = nrow(x_csr), ncol = nrow(y_csr))
+      # main loop
+      for (j in 2L:(length(x_csr@p))) {
+        if (self$progressbar) setTxtProgressBar(pb, j)
+        i1 = (x_csr@p[[j - 1]] + 1L):x_csr@p[[j]]
+        j1 = x_csr@j[i1] + 1L
+        m_j1 = wv_internal[, j1, drop = F]
+        x1 = x_csr@x[i1]
+
+        dist_matrix = dist_internal(m_j1, wv_internal, private$method)
+        for (i in 2L:(length(y_csr@p))) {
+          # document offsets
+          i2 = (y_csr@p[[i - 1L]] + 1L):y_csr@p[[i]]
+          # word indices
+          j2 = y_csr@j[i2] + 1L
+          # nbow values
+          x2 = y_csr@x[i2]
+          res[j - 1L, i - 1L] = private$rwmd_cache(dist_matrix[, j2, drop = FALSE], x1, x2)
+        }
+      }
+      if (self$progressbar) close(pb)
+      res
+    },
+41-------------------------------------------
+-------------------------------------------
+coherence_mean_npmi_cosim2 = function(term_indices, tcm, smooth, n_doc_tcm, ...) {
+  #TODO
+  #example of nonvectorized calculation
+  stopifnot(n_doc_tcm > 0L)
+  res = NA
+  if(length(term_indices) >= 2) {
+    res = tcm[term_indices, term_indices] / n_doc_tcm
+    res[lower.tri(res, diag = F)] = t(res)[lower.tri(res, diag = F)]
+    res = res + smooth
+    diag(res) = diag(res) - smooth
+    #interim storage of denominator
+    denominator =  res
+    d = diag(res)
+    res = res/d
+    res = res %*% diag(1 / d)
+    res = log2(res) / -log2(denominator)
+    #the following returns symmetric matrix of similarities between each row with each row -> subset triangle
+    res = sim2(res, method = "cosine", norm = "l2")
+    res = res[upper.tri(res)]
+    res = mean(res, na.rm = T)
+  }
+  return(res)
+}
+-------------------------------------------
+coherence_mean_npmi_cosim = function(term_indices, tcm, smooth, n_doc_tcm, ...) {
+  #TODO
+  #example of nonvectorized calculation
+  stopifnot(n_doc_tcm > 0L)
+  res = NA
+  if(length(term_indices) >= 2) {
+    res = tcm[term_indices, term_indices] / n_doc_tcm
+    res[lower.tri(res, diag = F)] = t(res)[lower.tri(res, diag = F)]
+    res = res + smooth
+    diag(res) = diag(res) - smooth
+    #interim storage of denominator
+    denominator =  res
+    d = diag(res)
+    res = res/d
+    res = res %*% diag(1 / d)
+    res = log2(res) / -log2(denominator)
+    #create values for cosine similarity check, for this metric: the sum of all npmi values
+    res_compare = t(matrix(rep(colSums(res), nrow(res)), nrow = nrow(res)))
+    res = psim2(res, res_compare, method = "cosine", norm = "l2")
+    res = mean(res, na.rm = T)
+  }
+  return(res)
+}

@@ -1,0 +1,3470 @@
+CC_43 : SimilaR_747
+------CC1------
+geom_jitter <- function(mapping = NULL, data = NULL,
+                        stat = "identity", position = "jitter",
+                        ...,
+                        width = NULL,
+                        height = NULL,
+                        na.rm = FALSE,
+                        show.legend = NA,
+                        inherit.aes = TRUE) {
+  if (!missing(width) || !missing(height)) {
+    if (!missing(position)) {
+      stop("Specify either `position` or `width`/`height`", call. = FALSE)
+    }
+
+    position <- position_jitter(width = width, height = height)
+  }
+
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = stat,
+    geom = GeomPoint,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------CC2------
+geom_abline <- function(mapping = NULL, data = NULL,
+                        ...,
+                        slope,
+                        intercept,
+                        na.rm = FALSE,
+                        show.legend = NA) {
+
+  # If nothing set, default to y = x
+  if (missing(mapping) && missing(slope) && missing(intercept)) {
+    slope <- 1
+    intercept <- 0
+  }
+
+  # Act like an annotation
+  if (!missing(slope) || !missing(intercept)) {
+    if (missing(slope)) slope <- 1
+    if (missing(intercept)) intercept <- 0
+
+    data <- data.frame(intercept = intercept, slope = slope)
+    mapping <- aes(intercept = intercept, slope = slope)
+    show.legend <- FALSE
+  }
+
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = StatIdentity,
+    geom = GeomAbline,
+    position = PositionIdentity,
+    show.legend = show.legend,
+    inherit.aes = FALSE,
+    params = list(
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------SR1------
+layer(data=data, mapping=mapping, stat=StatIdentity, geom=GeomAbline, position=PositionIdentity, show.legend=show.legend, inherit.aes=FALSE, params=list(na.rm=na.rm, ...))
+------SR2------
+layer(data=data, mapping=mapping, stat=stat, geom=GeomPoint, position=position, show.legend=show.legend, inherit.aes=inherit.aes, params=list(na.rm=na.rm, ...))
+CC_49 : SimilaR_1556
+------CC1------
+geom_map <- function(mapping = NULL, data = NULL,
+                     stat = "identity",
+                     ...,
+                     map,
+                     na.rm = FALSE,
+                     show.legend = NA,
+                     inherit.aes = TRUE) {
+  # Get map input into correct form
+  stopifnot(is.data.frame(map))
+  if (!is.null(map$lat)) map$y <- map$lat
+  if (!is.null(map$long)) map$x <- map$long
+  if (!is.null(map$region)) map$id <- map$region
+  stopifnot(all(c("x", "y", "id") %in% names(map)))
+
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = stat,
+    geom = GeomMap,
+    position = PositionIdentity,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      map = map,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------CC2------
+geom_abline <- function(mapping = NULL, data = NULL,
+                        ...,
+                        slope,
+                        intercept,
+                        na.rm = FALSE,
+                        show.legend = NA) {
+
+  # If nothing set, default to y = x
+  if (missing(mapping) && missing(slope) && missing(intercept)) {
+    slope <- 1
+    intercept <- 0
+  }
+
+  # Act like an annotation
+  if (!missing(slope) || !missing(intercept)) {
+    if (missing(slope)) slope <- 1
+    if (missing(intercept)) intercept <- 0
+
+    data <- data.frame(intercept = intercept, slope = slope)
+    mapping <- aes(intercept = intercept, slope = slope)
+    show.legend <- FALSE
+  }
+
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = StatIdentity,
+    geom = GeomAbline,
+    position = PositionIdentity,
+    show.legend = show.legend,
+    inherit.aes = FALSE,
+    params = list(
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------SR1------
+layer(data=data, mapping=mapping, stat=stat, geom=GeomMap, position=PositionIdentity, show.legend=show.legend, inherit.aes=inherit.aes, params=list(map=map, na.rm=na.rm, ...))
+------SR2------
+layer(data=data, mapping=mapping, stat=StatIdentity, geom=GeomAbline, position=PositionIdentity, show.legend=show.legend, inherit.aes=FALSE, params=list(na.rm=na.rm, ...))
+CC_52 : SimilaR_1611
+------CC1------
+geom_map <- function(mapping = NULL, data = NULL,
+                     stat = "identity",
+                     ...,
+                     map,
+                     na.rm = FALSE,
+                     show.legend = NA,
+                     inherit.aes = TRUE) {
+  # Get map input into correct form
+  stopifnot(is.data.frame(map))
+  if (!is.null(map$lat)) map$y <- map$lat
+  if (!is.null(map$long)) map$x <- map$long
+  if (!is.null(map$region)) map$id <- map$region
+  stopifnot(all(c("x", "y", "id") %in% names(map)))
+
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = stat,
+    geom = GeomMap,
+    position = PositionIdentity,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      map = map,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------CC2------
+geom_jitter <- function(mapping = NULL, data = NULL,
+                        stat = "identity", position = "jitter",
+                        ...,
+                        width = NULL,
+                        height = NULL,
+                        na.rm = FALSE,
+                        show.legend = NA,
+                        inherit.aes = TRUE) {
+  if (!missing(width) || !missing(height)) {
+    if (!missing(position)) {
+      stop("Specify either `position` or `width`/`height`", call. = FALSE)
+    }
+
+    position <- position_jitter(width = width, height = height)
+  }
+
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = stat,
+    geom = GeomPoint,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------SR1------
+layer(data=data, mapping=mapping, stat=stat, geom=GeomMap, position=PositionIdentity, show.legend=show.legend, inherit.aes=inherit.aes, params=list(map=map, na.rm=na.rm, ...))
+------SR2------
+layer(data=data, mapping=mapping, stat=stat, geom=GeomPoint, position=position, show.legend=show.legend, inherit.aes=inherit.aes, params=list(na.rm=na.rm, ...))
+CC_54 : SimilaR_1112
+------CC1------
+geom_label <- function(mapping = NULL, data = NULL,
+                       stat = "identity", position = "identity",
+                       ...,
+                       parse = FALSE,
+                       nudge_x = 0,
+                       nudge_y = 0,
+                       label.padding = unit(0.25, "lines"),
+                       label.r = unit(0.15, "lines"),
+                       label.size = 0.25,
+                       na.rm = FALSE,
+                       show.legend = NA,
+                       inherit.aes = TRUE) {
+  if (!missing(nudge_x) || !missing(nudge_y)) {
+    if (!missing(position)) {
+      stop("Specify either `position` or `nudge_x`/`nudge_y`", call. = FALSE)
+    }
+
+    position <- position_nudge(nudge_x, nudge_y)
+  }
+
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = stat,
+    geom = GeomLabel,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      parse = parse,
+      label.padding = label.padding,
+      label.r = label.r,
+      label.size = label.size,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------CC2------
+geom_jitter <- function(mapping = NULL, data = NULL,
+                        stat = "identity", position = "jitter",
+                        ...,
+                        width = NULL,
+                        height = NULL,
+                        na.rm = FALSE,
+                        show.legend = NA,
+                        inherit.aes = TRUE) {
+  if (!missing(width) || !missing(height)) {
+    if (!missing(position)) {
+      stop("Specify either `position` or `width`/`height`", call. = FALSE)
+    }
+
+    position <- position_jitter(width = width, height = height)
+  }
+
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = stat,
+    geom = GeomPoint,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------SR1------
+{ 
+	geom_jitter <- function(mapping=NULL, data=NULL, stat="identity", position="jitter", ..., width=NULL, height=NULL, na.rm=FALSE, show.legend=NA, inherit.aes=TRUE) {
+		if(!missing(width) || !missing(height)) {
+			if(!missing(position)) { 
+				stop("Specify either `position` or `width`/`height`", call.=FALSE)
+			}
+			position <- position_jitter(width=width, height=height)
+		}
+		layer(data=data, mapping=mapping, stat=stat, geom=GeomPoint, position=position, show.legend=show.legend, inherit.aes=inherit.aes, params=list(na.rm=na.rm, ...))
+	}
+}
+------SR2------
+function(mapping=NULL, data=NULL, stat="identity", position="identity", ..., parse=FALSE, nudge_x=0, nudge_y=0, label.padding=unit(0.25, "lines"), label.r=unit(0.15, "lines"), label.size=0.25, na.rm=FALSE, show.legend=NA, inherit.aes=TRUE) {
+	if(!missing(nudge_x) || !missing(nudge_y)) {
+		if(!missing(position)) { 
+			stop("Specify either `position` or `nudge_x`/`nudge_y`", call.=FALSE)
+		}
+		position <- position_nudge(nudge_x, nudge_y)
+	}
+	layer(data=data, mapping=mapping, stat=stat, geom=GeomLabel, position=position, show.legend=show.legend, inherit.aes=inherit.aes, params=list(parse=parse, label.padding=label.padding, label.r=label.r, label.size=label.size, na.rm=na.rm, ...))
+}
+CC_56 : SimilaR_1125
+------CC1------
+geom_label <- function(mapping = NULL, data = NULL,
+                       stat = "identity", position = "identity",
+                       ...,
+                       parse = FALSE,
+                       nudge_x = 0,
+                       nudge_y = 0,
+                       label.padding = unit(0.25, "lines"),
+                       label.r = unit(0.15, "lines"),
+                       label.size = 0.25,
+                       na.rm = FALSE,
+                       show.legend = NA,
+                       inherit.aes = TRUE) {
+  if (!missing(nudge_x) || !missing(nudge_y)) {
+    if (!missing(position)) {
+      stop("Specify either `position` or `nudge_x`/`nudge_y`", call. = FALSE)
+    }
+
+    position <- position_nudge(nudge_x, nudge_y)
+  }
+
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = stat,
+    geom = GeomLabel,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      parse = parse,
+      label.padding = label.padding,
+      label.r = label.r,
+      label.size = label.size,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------CC2------
+geom_curve <- function(mapping = NULL, data = NULL,
+                       stat = "identity", position = "identity",
+                       ...,
+                       curvature = 0.5,
+                       angle = 90,
+                       ncp = 5,
+                       arrow = NULL,
+                       lineend = "butt",
+                       na.rm = FALSE,
+                       show.legend = NA,
+                       inherit.aes = TRUE) {
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = stat,
+    geom = GeomCurve,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      arrow = arrow,
+      curvature = curvature,
+      angle = angle,
+      ncp = ncp,
+      lineend = lineend,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------SR1------
+{ 
+	layer(data=data, mapping=mapping, stat=stat, geom=GeomCurve, position=position, show.legend=show.legend, inherit.aes=inherit.aes, params=list(arrow=arrow, curvature=curvature, angle=angle, ncp=ncp, lineend=lineend, na.rm=na.rm, ...))
+}
+------SR2------
+layer(data=data, mapping=mapping, stat=stat, geom=GeomLabel, position=position, show.legend=show.legend, inherit.aes=inherit.aes, params=list(parse=parse, label.padding=label.padding, label.r=label.r, label.size=label.size, na.rm=na.rm, ...))
+CC_61 : SimilaR_1164
+------CC1------
+geom_raster <- function(mapping = NULL, data = NULL,
+                        stat = "identity", position = "identity",
+                        ...,
+                        hjust = 0.5,
+                        vjust = 0.5,
+                        interpolate = FALSE,
+                        na.rm = FALSE,
+                        show.legend = NA,
+                        inherit.aes = TRUE)
+{
+  stopifnot(is.numeric(hjust), length(hjust) == 1)
+  stopifnot(is.numeric(vjust), length(vjust) == 1)
+
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = stat,
+    geom = GeomRaster,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      hjust = hjust,
+      vjust = vjust,
+      interpolate = interpolate,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------CC2------
+geom_curve <- function(mapping = NULL, data = NULL,
+                       stat = "identity", position = "identity",
+                       ...,
+                       curvature = 0.5,
+                       angle = 90,
+                       ncp = 5,
+                       arrow = NULL,
+                       lineend = "butt",
+                       na.rm = FALSE,
+                       show.legend = NA,
+                       inherit.aes = TRUE) {
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = stat,
+    geom = GeomCurve,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      arrow = arrow,
+      curvature = curvature,
+      angle = angle,
+      ncp = ncp,
+      lineend = lineend,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------SR1------
+layer(data=data, mapping=mapping, stat=stat, geom=GeomCurve, position=position, show.legend=show.legend, inherit.aes=inherit.aes, params=list(arrow=arrow, curvature=curvature, angle=angle, ncp=ncp, lineend=lineend, na.rm=na.rm, ...))
+------SR2------
+layer(data=data, mapping=mapping, stat=stat, geom=GeomRaster, position=position, show.legend=show.legend, inherit.aes=inherit.aes, params=list(hjust=hjust, vjust=vjust, interpolate=interpolate, na.rm=na.rm, ...))
+CC_64 : SimilaR_1197
+------CC1------
+geom_raster <- function(mapping = NULL, data = NULL,
+                        stat = "identity", position = "identity",
+                        ...,
+                        hjust = 0.5,
+                        vjust = 0.5,
+                        interpolate = FALSE,
+                        na.rm = FALSE,
+                        show.legend = NA,
+                        inherit.aes = TRUE)
+{
+  stopifnot(is.numeric(hjust), length(hjust) == 1)
+  stopifnot(is.numeric(vjust), length(vjust) == 1)
+
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = stat,
+    geom = GeomRaster,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      hjust = hjust,
+      vjust = vjust,
+      interpolate = interpolate,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------CC2------
+geom_label <- function(mapping = NULL, data = NULL,
+                       stat = "identity", position = "identity",
+                       ...,
+                       parse = FALSE,
+                       nudge_x = 0,
+                       nudge_y = 0,
+                       label.padding = unit(0.25, "lines"),
+                       label.r = unit(0.15, "lines"),
+                       label.size = 0.25,
+                       na.rm = FALSE,
+                       show.legend = NA,
+                       inherit.aes = TRUE) {
+  if (!missing(nudge_x) || !missing(nudge_y)) {
+    if (!missing(position)) {
+      stop("Specify either `position` or `nudge_x`/`nudge_y`", call. = FALSE)
+    }
+
+    position <- position_nudge(nudge_x, nudge_y)
+  }
+
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = stat,
+    geom = GeomLabel,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      parse = parse,
+      label.padding = label.padding,
+      label.r = label.r,
+      label.size = label.size,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------SR1------
+layer(data=data, mapping=mapping, stat=stat, geom=GeomLabel, position=position, show.legend=show.legend, inherit.aes=inherit.aes, params=list(parse=parse, label.padding=label.padding, label.r=label.r, label.size=label.size, na.rm=na.rm, ...))
+------SR2------
+layer(data=data, mapping=mapping, stat=stat, geom=GeomRaster, position=position, show.legend=show.legend, inherit.aes=inherit.aes, params=list(hjust=hjust, vjust=vjust, interpolate=interpolate, na.rm=na.rm, ...))
+CC_66 : SimilaR_1682
+------CC1------
+geom_raster <- function(mapping = NULL, data = NULL,
+                        stat = "identity", position = "identity",
+                        ...,
+                        hjust = 0.5,
+                        vjust = 0.5,
+                        interpolate = FALSE,
+                        na.rm = FALSE,
+                        show.legend = NA,
+                        inherit.aes = TRUE)
+{
+  stopifnot(is.numeric(hjust), length(hjust) == 1)
+  stopifnot(is.numeric(vjust), length(vjust) == 1)
+
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = stat,
+    geom = GeomRaster,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      hjust = hjust,
+      vjust = vjust,
+      interpolate = interpolate,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------CC2------
+geom_map <- function(mapping = NULL, data = NULL,
+                     stat = "identity",
+                     ...,
+                     map,
+                     na.rm = FALSE,
+                     show.legend = NA,
+                     inherit.aes = TRUE) {
+  # Get map input into correct form
+  stopifnot(is.data.frame(map))
+  if (!is.null(map$lat)) map$y <- map$lat
+  if (!is.null(map$long)) map$x <- map$long
+  if (!is.null(map$region)) map$id <- map$region
+  stopifnot(all(c("x", "y", "id") %in% names(map)))
+
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = stat,
+    geom = GeomMap,
+    position = PositionIdentity,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      map = map,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------SR1------
+layer(data=data, mapping=mapping, stat=stat, geom=GeomMap, position=PositionIdentity, show.legend=show.legend, inherit.aes=inherit.aes, params=list(map=map, na.rm=na.rm, ...))
+------SR2------
+layer(data=data, mapping=mapping, stat=stat, geom=GeomRaster, position=position, show.legend=show.legend, inherit.aes=inherit.aes, params=list(hjust=hjust, vjust=vjust, interpolate=interpolate, na.rm=na.rm, ...))
+CC_77 : SimilaR_692
+------CC1------
+geom_text <- function(mapping = NULL, data = NULL,
+                      stat = "identity", position = "identity",
+                      ...,
+                      parse = FALSE,
+                      nudge_x = 0,
+                      nudge_y = 0,
+                      check_overlap = FALSE,
+                      na.rm = FALSE,
+                      show.legend = NA,
+                      inherit.aes = TRUE)
+{
+  if (!missing(nudge_x) || !missing(nudge_y)) {
+    if (!missing(position)) {
+      stop("Specify either `position` or `nudge_x`/`nudge_y`", call. = FALSE)
+    }
+
+    position <- position_nudge(nudge_x, nudge_y)
+  }
+
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = stat,
+    geom = GeomText,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      parse = parse,
+      check_overlap = check_overlap,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------CC2------
+geom_abline <- function(mapping = NULL, data = NULL,
+                        ...,
+                        slope,
+                        intercept,
+                        na.rm = FALSE,
+                        show.legend = NA) {
+
+  # If nothing set, default to y = x
+  if (missing(mapping) && missing(slope) && missing(intercept)) {
+    slope <- 1
+    intercept <- 0
+  }
+
+  # Act like an annotation
+  if (!missing(slope) || !missing(intercept)) {
+    if (missing(slope)) slope <- 1
+    if (missing(intercept)) intercept <- 0
+
+    data <- data.frame(intercept = intercept, slope = slope)
+    mapping <- aes(intercept = intercept, slope = slope)
+    show.legend <- FALSE
+  }
+
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = StatIdentity,
+    geom = GeomAbline,
+    position = PositionIdentity,
+    show.legend = show.legend,
+    inherit.aes = FALSE,
+    params = list(
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------SR1------
+layer(data=data, mapping=mapping, stat=StatIdentity, geom=GeomAbline, position=PositionIdentity, show.legend=show.legend, inherit.aes=FALSE, params=list(na.rm=na.rm, ...))
+------SR2------
+layer(data=data, mapping=mapping, stat=stat, geom=GeomText, position=position, show.legend=show.legend, inherit.aes=inherit.aes, params=list(parse=parse, check_overlap=check_overlap, na.rm=na.rm, ...))
+CC_80 : SimilaR_941
+------CC1------
+geom_text <- function(mapping = NULL, data = NULL,
+                      stat = "identity", position = "identity",
+                      ...,
+                      parse = FALSE,
+                      nudge_x = 0,
+                      nudge_y = 0,
+                      check_overlap = FALSE,
+                      na.rm = FALSE,
+                      show.legend = NA,
+                      inherit.aes = TRUE)
+{
+  if (!missing(nudge_x) || !missing(nudge_y)) {
+    if (!missing(position)) {
+      stop("Specify either `position` or `nudge_x`/`nudge_y`", call. = FALSE)
+    }
+
+    position <- position_nudge(nudge_x, nudge_y)
+  }
+
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = stat,
+    geom = GeomText,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      parse = parse,
+      check_overlap = check_overlap,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------CC2------
+geom_label <- function(mapping = NULL, data = NULL,
+                       stat = "identity", position = "identity",
+                       ...,
+                       parse = FALSE,
+                       nudge_x = 0,
+                       nudge_y = 0,
+                       label.padding = unit(0.25, "lines"),
+                       label.r = unit(0.15, "lines"),
+                       label.size = 0.25,
+                       na.rm = FALSE,
+                       show.legend = NA,
+                       inherit.aes = TRUE) {
+  if (!missing(nudge_x) || !missing(nudge_y)) {
+    if (!missing(position)) {
+      stop("Specify either `position` or `nudge_x`/`nudge_y`", call. = FALSE)
+    }
+
+    position <- position_nudge(nudge_x, nudge_y)
+  }
+
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = stat,
+    geom = GeomLabel,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      parse = parse,
+      label.padding = label.padding,
+      label.r = label.r,
+      label.size = label.size,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------SR1------
+geom_text <- function(mapping=NULL, data=NULL, stat="identity", position="identity", ..., parse=FALSE, nudge_x=0, nudge_y=0, check_overlap=FALSE, na.rm=FALSE, show.legend=NA, inherit.aes=TRUE) {
+	if(!missing(nudge_x) || !missing(nudge_y)) {
+		if(!missing(position)) { 
+			stop("Specify either `position` or `nudge_x`/`nudge_y`", call.=FALSE)
+		}
+		position <- position_nudge(nudge_x, nudge_y)
+	}
+	layer(data=data, mapping=mapping, stat=stat, geom=GeomText, position=position, show.legend=show.legend, inherit.aes=inherit.aes, params=list(parse=parse, check_overlap=check_overlap, na.rm=na.rm, ...))
+}
+------SR2------
+geom_label <- function(mapping=NULL, data=NULL, stat="identity", position="identity", ..., parse=FALSE, nudge_x=0, nudge_y=0, label.padding=unit(0.25, "lines"), label.r=unit(0.15, "lines"), label.size=0.25, na.rm=FALSE, show.legend=NA, inherit.aes=TRUE) {
+	if(!missing(nudge_x) || !missing(nudge_y)) {
+		if(!missing(position)) { 
+			stop("Specify either `position` or `nudge_x`/`nudge_y`", call.=FALSE)
+		}
+		position <- position_nudge(nudge_x, nudge_y)
+	}
+	layer(data=data, mapping=mapping, stat=stat, geom=GeomLabel, position=position, show.legend=show.legend, inherit.aes=inherit.aes, params=list(parse=parse, label.padding=label.padding, label.r=label.r, label.size=label.size, na.rm=na.rm, ...))
+}
+CC_81 : SimilaR_1590
+------CC1------
+geom_text <- function(mapping = NULL, data = NULL,
+                      stat = "identity", position = "identity",
+                      ...,
+                      parse = FALSE,
+                      nudge_x = 0,
+                      nudge_y = 0,
+                      check_overlap = FALSE,
+                      na.rm = FALSE,
+                      show.legend = NA,
+                      inherit.aes = TRUE)
+{
+  if (!missing(nudge_x) || !missing(nudge_y)) {
+    if (!missing(position)) {
+      stop("Specify either `position` or `nudge_x`/`nudge_y`", call. = FALSE)
+    }
+
+    position <- position_nudge(nudge_x, nudge_y)
+  }
+
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = stat,
+    geom = GeomText,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      parse = parse,
+      check_overlap = check_overlap,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------CC2------
+geom_map <- function(mapping = NULL, data = NULL,
+                     stat = "identity",
+                     ...,
+                     map,
+                     na.rm = FALSE,
+                     show.legend = NA,
+                     inherit.aes = TRUE) {
+  # Get map input into correct form
+  stopifnot(is.data.frame(map))
+  if (!is.null(map$lat)) map$y <- map$lat
+  if (!is.null(map$long)) map$x <- map$long
+  if (!is.null(map$region)) map$id <- map$region
+  stopifnot(all(c("x", "y", "id") %in% names(map)))
+
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = stat,
+    geom = GeomMap,
+    position = PositionIdentity,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      map = map,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------SR1------
+layer(data=data, mapping=mapping, stat=stat, geom=GeomMap, position=PositionIdentity, show.legend=show.legend, inherit.aes=inherit.aes, params=list(map=map, na.rm=na.rm, ...))
+------SR2------
+layer(data=data, mapping=mapping, stat=stat, geom=GeomText, position=position, show.legend=show.legend, inherit.aes=inherit.aes, params=list(parse=parse, check_overlap=check_overlap, na.rm=na.rm, ...))
+CC_82 : SimilaR_975
+------CC1------
+geom_text <- function(mapping = NULL, data = NULL,
+                      stat = "identity", position = "identity",
+                      ...,
+                      parse = FALSE,
+                      nudge_x = 0,
+                      nudge_y = 0,
+                      check_overlap = FALSE,
+                      na.rm = FALSE,
+                      show.legend = NA,
+                      inherit.aes = TRUE)
+{
+  if (!missing(nudge_x) || !missing(nudge_y)) {
+    if (!missing(position)) {
+      stop("Specify either `position` or `nudge_x`/`nudge_y`", call. = FALSE)
+    }
+
+    position <- position_nudge(nudge_x, nudge_y)
+  }
+
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = stat,
+    geom = GeomText,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      parse = parse,
+      check_overlap = check_overlap,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------CC2------
+geom_raster <- function(mapping = NULL, data = NULL,
+                        stat = "identity", position = "identity",
+                        ...,
+                        hjust = 0.5,
+                        vjust = 0.5,
+                        interpolate = FALSE,
+                        na.rm = FALSE,
+                        show.legend = NA,
+                        inherit.aes = TRUE)
+{
+  stopifnot(is.numeric(hjust), length(hjust) == 1)
+  stopifnot(is.numeric(vjust), length(vjust) == 1)
+
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = stat,
+    geom = GeomRaster,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      hjust = hjust,
+      vjust = vjust,
+      interpolate = interpolate,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------SR1------
+layer(data=data, mapping=mapping, stat=stat, geom=GeomText, position=position, show.legend=show.legend, inherit.aes=inherit.aes, params=list(parse=parse, check_overlap=check_overlap, na.rm=na.rm, ...))
+------SR2------
+layer(data=data, mapping=mapping, stat=stat, geom=GeomRaster, position=position, show.legend=show.legend, inherit.aes=inherit.aes, params=list(hjust=hjust, vjust=vjust, interpolate=interpolate, na.rm=na.rm, ...))
+CC_84 : SimilaR_938
+------CC1------
+geom_text <- function(mapping = NULL, data = NULL,
+                      stat = "identity", position = "identity",
+                      ...,
+                      parse = FALSE,
+                      nudge_x = 0,
+                      nudge_y = 0,
+                      check_overlap = FALSE,
+                      na.rm = FALSE,
+                      show.legend = NA,
+                      inherit.aes = TRUE)
+{
+  if (!missing(nudge_x) || !missing(nudge_y)) {
+    if (!missing(position)) {
+      stop("Specify either `position` or `nudge_x`/`nudge_y`", call. = FALSE)
+    }
+
+    position <- position_nudge(nudge_x, nudge_y)
+  }
+
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = stat,
+    geom = GeomText,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      parse = parse,
+      check_overlap = check_overlap,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------CC2------
+geom_jitter <- function(mapping = NULL, data = NULL,
+                        stat = "identity", position = "jitter",
+                        ...,
+                        width = NULL,
+                        height = NULL,
+                        na.rm = FALSE,
+                        show.legend = NA,
+                        inherit.aes = TRUE) {
+  if (!missing(width) || !missing(height)) {
+    if (!missing(position)) {
+      stop("Specify either `position` or `width`/`height`", call. = FALSE)
+    }
+
+    position <- position_jitter(width = width, height = height)
+  }
+
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = stat,
+    geom = GeomPoint,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------SR1------
+geom_text <- function(mapping=NULL, data=NULL, stat="identity", position="identity", ..., parse=FALSE, nudge_x=0, nudge_y=0, check_overlap=FALSE, na.rm=FALSE, show.legend=NA, inherit.aes=TRUE) {
+	if(!missing(nudge_x) || !missing(nudge_y)) {
+		if(!missing(position)) { 
+			stop("Specify either `position` or `nudge_x`/`nudge_y`", call.=FALSE)
+		}
+		position <- position_nudge(nudge_x, nudge_y)
+	}
+	layer(data=data, mapping=mapping, stat=stat, geom=GeomText, position=position, show.legend=show.legend, inherit.aes=inherit.aes, params=list(parse=parse, check_overlap=check_overlap, na.rm=na.rm, ...))
+}
+------SR2------
+{ 
+	geom_jitter <- function(mapping=NULL, data=NULL, stat="identity", position="jitter", ..., width=NULL, height=NULL, na.rm=FALSE, show.legend=NA, inherit.aes=TRUE) {
+		if(!missing(width) || !missing(height)) {
+			if(!missing(position)) { 
+				stop("Specify either `position` or `width`/`height`", call.=FALSE)
+			}
+			position <- position_jitter(width=width, height=height)
+		}
+		layer(data=data, mapping=mapping, stat=stat, geom=GeomPoint, position=position, show.legend=show.legend, inherit.aes=inherit.aes, params=list(na.rm=na.rm, ...))
+	}
+}
+CC_108 : SimilaR_1136
+------CC1------
+stat_bin <- function(mapping = NULL, data = NULL,
+                     geom = "bar", position = "stack",
+                     ...,
+                     binwidth = NULL,
+                     bins = NULL,
+                     center = NULL,
+                     boundary = NULL,
+                     closed = c("right", "left"),
+                     pad = FALSE,
+                     na.rm = FALSE,
+                     show.legend = NA,
+                     inherit.aes = TRUE) {
+
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = StatBin,
+    geom = geom,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      binwidth = binwidth,
+      bins = bins,
+      center = center,
+      boundary = boundary,
+      closed = closed,
+      pad = pad,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------CC2------
+geom_curve <- function(mapping = NULL, data = NULL,
+                       stat = "identity", position = "identity",
+                       ...,
+                       curvature = 0.5,
+                       angle = 90,
+                       ncp = 5,
+                       arrow = NULL,
+                       lineend = "butt",
+                       na.rm = FALSE,
+                       show.legend = NA,
+                       inherit.aes = TRUE) {
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = stat,
+    geom = GeomCurve,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      arrow = arrow,
+      curvature = curvature,
+      angle = angle,
+      ncp = ncp,
+      lineend = lineend,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------SR1------
+geom_curve <- function(mapping=NULL, data=NULL, stat="identity", position="identity", ..., curvature=0.5, angle=90, ncp=5, arrow=NULL, lineend="butt", na.rm=FALSE, show.legend=NA, inherit.aes=TRUE) { 
+	layer(data=data, mapping=mapping, stat=stat, geom=GeomCurve, position=position, show.legend=show.legend, inherit.aes=inherit.aes, params=list(arrow=arrow, curvature=curvature, angle=angle, ncp=ncp, lineend=lineend, na.rm=na.rm, ...))
+}
+------SR2------
+stat_bin <- function(mapping=NULL, data=NULL, geom="bar", position="stack", ..., binwidth=NULL, bins=NULL, center=NULL, boundary=NULL, closed=c("right", "left"), pad=FALSE, na.rm=FALSE, show.legend=NA, inherit.aes=TRUE) { 
+	layer(data=data, mapping=mapping, stat=StatBin, geom=geom, position=position, show.legend=show.legend, inherit.aes=inherit.aes, params=list(binwidth=binwidth, bins=bins, center=center, boundary=boundary, closed=closed, pad=pad, na.rm=na.rm, ...))
+}
+CC_119 : SimilaR_1776
+------CC1------
+stat_quantile <- function(mapping = NULL, data = NULL,
+                          geom = "quantile", position = "identity",
+                          ...,
+                          quantiles = c(0.25, 0.5, 0.75),
+                          formula = NULL,
+                          method = "rq",
+                          method.args = list(),
+                          na.rm = FALSE,
+                          show.legend = NA,
+                          inherit.aes = TRUE) {
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = StatQuantile,
+    geom = geom,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      quantiles = quantiles,
+      formula = formula,
+      method = method,
+      method.args = method.args,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------CC2------
+geom_curve <- function(mapping = NULL, data = NULL,
+                       stat = "identity", position = "identity",
+                       ...,
+                       curvature = 0.5,
+                       angle = 90,
+                       ncp = 5,
+                       arrow = NULL,
+                       lineend = "butt",
+                       na.rm = FALSE,
+                       show.legend = NA,
+                       inherit.aes = TRUE) {
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = stat,
+    geom = GeomCurve,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      arrow = arrow,
+      curvature = curvature,
+      angle = angle,
+      ncp = ncp,
+      lineend = lineend,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------SR1------
+stat_quantile <- function(mapping=NULL, data=NULL, geom="quantile", position="identity", ..., quantiles=c(0.25, 0.5, 0.75), formula=NULL, method="rq", method.args=list(), na.rm=FALSE, show.legend=NA, inherit.aes=TRUE) { 
+	layer(data=data, mapping=mapping, stat=StatQuantile, geom=geom, position=position, show.legend=show.legend, inherit.aes=inherit.aes, params=list(quantiles=quantiles, formula=formula, method=method, method.args=method.args, na.rm=na.rm, ...))
+}
+------SR2------
+geom_curve <- function(mapping=NULL, data=NULL, stat="identity", position="identity", ..., curvature=0.5, angle=90, ncp=5, arrow=NULL, lineend="butt", na.rm=FALSE, show.legend=NA, inherit.aes=TRUE) { 
+	layer(data=data, mapping=mapping, stat=stat, geom=GeomCurve, position=position, show.legend=show.legend, inherit.aes=inherit.aes, params=list(arrow=arrow, curvature=curvature, angle=angle, ncp=ncp, lineend=lineend, na.rm=na.rm, ...))
+}
+CC_121 : SimilaR_1784
+------CC1------
+stat_quantile <- function(mapping = NULL, data = NULL,
+                          geom = "quantile", position = "identity",
+                          ...,
+                          quantiles = c(0.25, 0.5, 0.75),
+                          formula = NULL,
+                          method = "rq",
+                          method.args = list(),
+                          na.rm = FALSE,
+                          show.legend = NA,
+                          inherit.aes = TRUE) {
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = StatQuantile,
+    geom = geom,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      quantiles = quantiles,
+      formula = formula,
+      method = method,
+      method.args = method.args,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------CC2------
+geom_label <- function(mapping = NULL, data = NULL,
+                       stat = "identity", position = "identity",
+                       ...,
+                       parse = FALSE,
+                       nudge_x = 0,
+                       nudge_y = 0,
+                       label.padding = unit(0.25, "lines"),
+                       label.r = unit(0.15, "lines"),
+                       label.size = 0.25,
+                       na.rm = FALSE,
+                       show.legend = NA,
+                       inherit.aes = TRUE) {
+  if (!missing(nudge_x) || !missing(nudge_y)) {
+    if (!missing(position)) {
+      stop("Specify either `position` or `nudge_x`/`nudge_y`", call. = FALSE)
+    }
+
+    position <- position_nudge(nudge_x, nudge_y)
+  }
+
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = stat,
+    geom = GeomLabel,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      parse = parse,
+      label.padding = label.padding,
+      label.r = label.r,
+      label.size = label.size,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------SR1------
+{ 
+	layer(data=data, mapping=mapping, stat=StatQuantile, geom=geom, position=position, show.legend=show.legend, inherit.aes=inherit.aes, params=list(quantiles=quantiles, formula=formula, method=method, method.args=method.args, na.rm=na.rm, ...))
+}
+------SR2------
+layer(data=data, mapping=mapping, stat=stat, geom=GeomLabel, position=position, show.legend=show.legend, inherit.aes=inherit.aes, params=list(parse=parse, label.padding=label.padding, label.r=label.r, label.size=label.size, na.rm=na.rm, ...))
+CC_123 : SimilaR_1764
+------CC1------
+stat_quantile <- function(mapping = NULL, data = NULL,
+                          geom = "quantile", position = "identity",
+                          ...,
+                          quantiles = c(0.25, 0.5, 0.75),
+                          formula = NULL,
+                          method = "rq",
+                          method.args = list(),
+                          na.rm = FALSE,
+                          show.legend = NA,
+                          inherit.aes = TRUE) {
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = StatQuantile,
+    geom = geom,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      quantiles = quantiles,
+      formula = formula,
+      method = method,
+      method.args = method.args,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------CC2------
+geom_text <- function(mapping = NULL, data = NULL,
+                      stat = "identity", position = "identity",
+                      ...,
+                      parse = FALSE,
+                      nudge_x = 0,
+                      nudge_y = 0,
+                      check_overlap = FALSE,
+                      na.rm = FALSE,
+                      show.legend = NA,
+                      inherit.aes = TRUE)
+{
+  if (!missing(nudge_x) || !missing(nudge_y)) {
+    if (!missing(position)) {
+      stop("Specify either `position` or `nudge_x`/`nudge_y`", call. = FALSE)
+    }
+
+    position <- position_nudge(nudge_x, nudge_y)
+  }
+
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = stat,
+    geom = GeomText,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      parse = parse,
+      check_overlap = check_overlap,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------SR1------
+layer(data=data, mapping=mapping, stat=StatQuantile, geom=geom, position=position, show.legend=show.legend, inherit.aes=inherit.aes, params=list(quantiles=quantiles, formula=formula, method=method, method.args=method.args, na.rm=na.rm, ...))
+------SR2------
+layer(data=data, mapping=mapping, stat=stat, geom=GeomText, position=position, show.legend=show.legend, inherit.aes=inherit.aes, params=list(parse=parse, check_overlap=check_overlap, na.rm=na.rm, ...))
+CC_128 : SimilaR_1835
+------CC1------
+stat_quantile <- function(mapping = NULL, data = NULL,
+                          geom = "quantile", position = "identity",
+                          ...,
+                          quantiles = c(0.25, 0.5, 0.75),
+                          formula = NULL,
+                          method = "rq",
+                          method.args = list(),
+                          na.rm = FALSE,
+                          show.legend = NA,
+                          inherit.aes = TRUE) {
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = StatQuantile,
+    geom = geom,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      quantiles = quantiles,
+      formula = formula,
+      method = method,
+      method.args = method.args,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------CC2------
+geom_raster <- function(mapping = NULL, data = NULL,
+                        stat = "identity", position = "identity",
+                        ...,
+                        hjust = 0.5,
+                        vjust = 0.5,
+                        interpolate = FALSE,
+                        na.rm = FALSE,
+                        show.legend = NA,
+                        inherit.aes = TRUE)
+{
+  stopifnot(is.numeric(hjust), length(hjust) == 1)
+  stopifnot(is.numeric(vjust), length(vjust) == 1)
+
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = stat,
+    geom = GeomRaster,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      hjust = hjust,
+      vjust = vjust,
+      interpolate = interpolate,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------SR1------
+{ 
+	layer(data=data, mapping=mapping, stat=StatQuantile, geom=geom, position=position, show.legend=show.legend, inherit.aes=inherit.aes, params=list(quantiles=quantiles, formula=formula, method=method, method.args=method.args, na.rm=na.rm, ...))
+}
+------SR2------
+layer(data=data, mapping=mapping, stat=stat, geom=GeomRaster, position=position, show.legend=show.legend, inherit.aes=inherit.aes, params=list(hjust=hjust, vjust=vjust, interpolate=interpolate, na.rm=na.rm, ...))
+CC_129 : SimilaR_1805
+------CC1------
+stat_quantile <- function(mapping = NULL, data = NULL,
+                          geom = "quantile", position = "identity",
+                          ...,
+                          quantiles = c(0.25, 0.5, 0.75),
+                          formula = NULL,
+                          method = "rq",
+                          method.args = list(),
+                          na.rm = FALSE,
+                          show.legend = NA,
+                          inherit.aes = TRUE) {
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = StatQuantile,
+    geom = geom,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      quantiles = quantiles,
+      formula = formula,
+      method = method,
+      method.args = method.args,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------CC2------
+stat_bin <- function(mapping = NULL, data = NULL,
+                     geom = "bar", position = "stack",
+                     ...,
+                     binwidth = NULL,
+                     bins = NULL,
+                     center = NULL,
+                     boundary = NULL,
+                     closed = c("right", "left"),
+                     pad = FALSE,
+                     na.rm = FALSE,
+                     show.legend = NA,
+                     inherit.aes = TRUE) {
+
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = StatBin,
+    geom = geom,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      binwidth = binwidth,
+      bins = bins,
+      center = center,
+      boundary = boundary,
+      closed = closed,
+      pad = pad,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------SR1------
+stat_quantile <- function(mapping=NULL, data=NULL, geom="quantile", position="identity", ..., quantiles=c(0.25, 0.5, 0.75), formula=NULL, method="rq", method.args=list(), na.rm=FALSE, show.legend=NA, inherit.aes=TRUE) { 
+	layer(data=data, mapping=mapping, stat=StatQuantile, geom=geom, position=position, show.legend=show.legend, inherit.aes=inherit.aes, params=list(quantiles=quantiles, formula=formula, method=method, method.args=method.args, na.rm=na.rm, ...))
+}
+------SR2------
+stat_bin <- function(mapping=NULL, data=NULL, geom="bar", position="stack", ..., binwidth=NULL, bins=NULL, center=NULL, boundary=NULL, closed=c("right", "left"), pad=FALSE, na.rm=FALSE, show.legend=NA, inherit.aes=TRUE) { 
+	layer(data=data, mapping=mapping, stat=StatBin, geom=geom, position=position, show.legend=show.legend, inherit.aes=inherit.aes, params=list(binwidth=binwidth, bins=bins, center=center, boundary=boundary, closed=closed, pad=pad, na.rm=na.rm, ...))
+}
+CC_142 : SimilaR_1768
+------CC1------
+stat_summary_2d <- function(mapping = NULL, data = NULL,
+                            geom = "tile", position = "identity",
+                            ...,
+                            bins = 30,
+                            binwidth = NULL,
+                            drop = TRUE,
+                            fun = "mean",
+                            fun.args = list(),
+                            na.rm = FALSE,
+                            show.legend = NA,
+                            inherit.aes = TRUE) {
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = StatSummary2d,
+    geom = geom,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      bins = bins,
+      binwidth = binwidth,
+      drop = drop,
+      fun = fun,
+      fun.args = fun.args,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------CC2------
+stat_quantile <- function(mapping = NULL, data = NULL,
+                          geom = "quantile", position = "identity",
+                          ...,
+                          quantiles = c(0.25, 0.5, 0.75),
+                          formula = NULL,
+                          method = "rq",
+                          method.args = list(),
+                          na.rm = FALSE,
+                          show.legend = NA,
+                          inherit.aes = TRUE) {
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = StatQuantile,
+    geom = geom,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      quantiles = quantiles,
+      formula = formula,
+      method = method,
+      method.args = method.args,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------SR1------
+stat_quantile <- function(mapping=NULL, data=NULL, geom="quantile", position="identity", ..., quantiles=c(0.25, 0.5, 0.75), formula=NULL, method="rq", method.args=list(), na.rm=FALSE, show.legend=NA, inherit.aes=TRUE) { 
+	layer(data=data, mapping=mapping, stat=StatQuantile, geom=geom, position=position, show.legend=show.legend, inherit.aes=inherit.aes, params=list(quantiles=quantiles, formula=formula, method=method, method.args=method.args, na.rm=na.rm, ...))
+}
+------SR2------
+stat_summary_2d <- function(mapping=NULL, data=NULL, geom="tile", position="identity", ..., bins=30, binwidth=NULL, drop=TRUE, fun="mean", fun.args=list(), na.rm=FALSE, show.legend=NA, inherit.aes=TRUE) { 
+	layer(data=data, mapping=mapping, stat=StatSummary2d, geom=geom, position=position, show.legend=show.legend, inherit.aes=inherit.aes, params=list(bins=bins, binwidth=binwidth, drop=drop, fun=fun, fun.args=fun.args, na.rm=na.rm, ...))
+}
+CC_143 : SimilaR_986
+------CC1------
+stat_summary_2d <- function(mapping = NULL, data = NULL,
+                            geom = "tile", position = "identity",
+                            ...,
+                            bins = 30,
+                            binwidth = NULL,
+                            drop = TRUE,
+                            fun = "mean",
+                            fun.args = list(),
+                            na.rm = FALSE,
+                            show.legend = NA,
+                            inherit.aes = TRUE) {
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = StatSummary2d,
+    geom = geom,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      bins = bins,
+      binwidth = binwidth,
+      drop = drop,
+      fun = fun,
+      fun.args = fun.args,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------CC2------
+geom_curve <- function(mapping = NULL, data = NULL,
+                       stat = "identity", position = "identity",
+                       ...,
+                       curvature = 0.5,
+                       angle = 90,
+                       ncp = 5,
+                       arrow = NULL,
+                       lineend = "butt",
+                       na.rm = FALSE,
+                       show.legend = NA,
+                       inherit.aes = TRUE) {
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = stat,
+    geom = GeomCurve,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      arrow = arrow,
+      curvature = curvature,
+      angle = angle,
+      ncp = ncp,
+      lineend = lineend,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------SR1------
+stat_summary_2d <- function(mapping=NULL, data=NULL, geom="tile", position="identity", ..., bins=30, binwidth=NULL, drop=TRUE, fun="mean", fun.args=list(), na.rm=FALSE, show.legend=NA, inherit.aes=TRUE) { 
+	layer(data=data, mapping=mapping, stat=StatSummary2d, geom=geom, position=position, show.legend=show.legend, inherit.aes=inherit.aes, params=list(bins=bins, binwidth=binwidth, drop=drop, fun=fun, fun.args=fun.args, na.rm=na.rm, ...))
+}
+------SR2------
+geom_curve <- function(mapping=NULL, data=NULL, stat="identity", position="identity", ..., curvature=0.5, angle=90, ncp=5, arrow=NULL, lineend="butt", na.rm=FALSE, show.legend=NA, inherit.aes=TRUE) { 
+	layer(data=data, mapping=mapping, stat=stat, geom=GeomCurve, position=position, show.legend=show.legend, inherit.aes=inherit.aes, params=list(arrow=arrow, curvature=curvature, angle=angle, ncp=ncp, lineend=lineend, na.rm=na.rm, ...))
+}
+CC_151 : SimilaR_1060
+------CC1------
+stat_summary_2d <- function(mapping = NULL, data = NULL,
+                            geom = "tile", position = "identity",
+                            ...,
+                            bins = 30,
+                            binwidth = NULL,
+                            drop = TRUE,
+                            fun = "mean",
+                            fun.args = list(),
+                            na.rm = FALSE,
+                            show.legend = NA,
+                            inherit.aes = TRUE) {
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = StatSummary2d,
+    geom = geom,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      bins = bins,
+      binwidth = binwidth,
+      drop = drop,
+      fun = fun,
+      fun.args = fun.args,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------CC2------
+geom_raster <- function(mapping = NULL, data = NULL,
+                        stat = "identity", position = "identity",
+                        ...,
+                        hjust = 0.5,
+                        vjust = 0.5,
+                        interpolate = FALSE,
+                        na.rm = FALSE,
+                        show.legend = NA,
+                        inherit.aes = TRUE)
+{
+  stopifnot(is.numeric(hjust), length(hjust) == 1)
+  stopifnot(is.numeric(vjust), length(vjust) == 1)
+
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = stat,
+    geom = GeomRaster,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      hjust = hjust,
+      vjust = vjust,
+      interpolate = interpolate,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------SR1------
+layer(data=data, mapping=mapping, stat=StatSummary2d, geom=geom, position=position, show.legend=show.legend, inherit.aes=inherit.aes, params=list(bins=bins, binwidth=binwidth, drop=drop, fun=fun, fun.args=fun.args, na.rm=na.rm, ...))
+------SR2------
+layer(data=data, mapping=mapping, stat=stat, geom=GeomRaster, position=position, show.legend=show.legend, inherit.aes=inherit.aes, params=list(hjust=hjust, vjust=vjust, interpolate=interpolate, na.rm=na.rm, ...))
+CC_152 : SimilaR_1013
+------CC1------
+stat_summary_2d <- function(mapping = NULL, data = NULL,
+                            geom = "tile", position = "identity",
+                            ...,
+                            bins = 30,
+                            binwidth = NULL,
+                            drop = TRUE,
+                            fun = "mean",
+                            fun.args = list(),
+                            na.rm = FALSE,
+                            show.legend = NA,
+                            inherit.aes = TRUE) {
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = StatSummary2d,
+    geom = geom,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      bins = bins,
+      binwidth = binwidth,
+      drop = drop,
+      fun = fun,
+      fun.args = fun.args,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------CC2------
+stat_bin <- function(mapping = NULL, data = NULL,
+                     geom = "bar", position = "stack",
+                     ...,
+                     binwidth = NULL,
+                     bins = NULL,
+                     center = NULL,
+                     boundary = NULL,
+                     closed = c("right", "left"),
+                     pad = FALSE,
+                     na.rm = FALSE,
+                     show.legend = NA,
+                     inherit.aes = TRUE) {
+
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = StatBin,
+    geom = geom,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      binwidth = binwidth,
+      bins = bins,
+      center = center,
+      boundary = boundary,
+      closed = closed,
+      pad = pad,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------SR1------
+stat_summary_2d <- function(mapping=NULL, data=NULL, geom="tile", position="identity", ..., bins=30, binwidth=NULL, drop=TRUE, fun="mean", fun.args=list(), na.rm=FALSE, show.legend=NA, inherit.aes=TRUE) { 
+	layer(data=data, mapping=mapping, stat=StatSummary2d, geom=geom, position=position, show.legend=show.legend, inherit.aes=inherit.aes, params=list(bins=bins, binwidth=binwidth, drop=drop, fun=fun, fun.args=fun.args, na.rm=na.rm, ...))
+}
+------SR2------
+stat_bin <- function(mapping=NULL, data=NULL, geom="bar", position="stack", ..., binwidth=NULL, bins=NULL, center=NULL, boundary=NULL, closed=c("right", "left"), pad=FALSE, na.rm=FALSE, show.legend=NA, inherit.aes=TRUE) { 
+	layer(data=data, mapping=mapping, stat=StatBin, geom=geom, position=position, show.legend=show.legend, inherit.aes=inherit.aes, params=list(binwidth=binwidth, bins=bins, center=center, boundary=boundary, closed=closed, pad=pad, na.rm=na.rm, ...))
+}
+CC_155 : SimilaR_1817
+------CC1------
+stat_summary_bin <- function(mapping = NULL, data = NULL,
+                             geom = "pointrange", position = "identity",
+                             ...,
+                             fun.data = NULL,
+                             fun.y = NULL,
+                             fun.ymax = NULL,
+                             fun.ymin = NULL,
+                             fun.args = list(),
+                             na.rm = FALSE,
+                             show.legend = NA,
+                             inherit.aes = TRUE) {
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = StatSummaryBin,
+    geom = geom,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      fun.data = fun.data,
+      fun.y = fun.y,
+      fun.ymax = fun.ymax,
+      fun.ymin = fun.ymin,
+      fun.args = fun.args,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------CC2------
+stat_quantile <- function(mapping = NULL, data = NULL,
+                          geom = "quantile", position = "identity",
+                          ...,
+                          quantiles = c(0.25, 0.5, 0.75),
+                          formula = NULL,
+                          method = "rq",
+                          method.args = list(),
+                          na.rm = FALSE,
+                          show.legend = NA,
+                          inherit.aes = TRUE) {
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = StatQuantile,
+    geom = geom,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      quantiles = quantiles,
+      formula = formula,
+      method = method,
+      method.args = method.args,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------SR1------
+stat_quantile <- function(mapping=NULL, data=NULL, geom="quantile", position="identity", ..., quantiles=c(0.25, 0.5, 0.75), formula=NULL, method="rq", method.args=list(), na.rm=FALSE, show.legend=NA, inherit.aes=TRUE) { 
+	layer(data=data, mapping=mapping, stat=StatQuantile, geom=geom, position=position, show.legend=show.legend, inherit.aes=inherit.aes, params=list(quantiles=quantiles, formula=formula, method=method, method.args=method.args, na.rm=na.rm, ...))
+}
+------SR2------
+stat_summary_bin <- function(mapping=NULL, data=NULL, geom="pointrange", position="identity", ..., fun.data=NULL, fun.y=NULL, fun.ymax=NULL, fun.ymin=NULL, fun.args=list(), na.rm=FALSE, show.legend=NA, inherit.aes=TRUE) { 
+	layer(data=data, mapping=mapping, stat=StatSummaryBin, geom=geom, position=position, show.legend=show.legend, inherit.aes=inherit.aes, params=list(fun.data=fun.data, fun.y=fun.y, fun.ymax=fun.ymax, fun.ymin=fun.ymin, fun.args=fun.args, na.rm=na.rm, ...))
+}
+CC_156 : SimilaR_1151
+------CC1------
+stat_summary_bin <- function(mapping = NULL, data = NULL,
+                             geom = "pointrange", position = "identity",
+                             ...,
+                             fun.data = NULL,
+                             fun.y = NULL,
+                             fun.ymax = NULL,
+                             fun.ymin = NULL,
+                             fun.args = list(),
+                             na.rm = FALSE,
+                             show.legend = NA,
+                             inherit.aes = TRUE) {
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = StatSummaryBin,
+    geom = geom,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      fun.data = fun.data,
+      fun.y = fun.y,
+      fun.ymax = fun.ymax,
+      fun.ymin = fun.ymin,
+      fun.args = fun.args,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------CC2------
+geom_curve <- function(mapping = NULL, data = NULL,
+                       stat = "identity", position = "identity",
+                       ...,
+                       curvature = 0.5,
+                       angle = 90,
+                       ncp = 5,
+                       arrow = NULL,
+                       lineend = "butt",
+                       na.rm = FALSE,
+                       show.legend = NA,
+                       inherit.aes = TRUE) {
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = stat,
+    geom = GeomCurve,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      arrow = arrow,
+      curvature = curvature,
+      angle = angle,
+      ncp = ncp,
+      lineend = lineend,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------SR1------
+geom_curve <- function(mapping=NULL, data=NULL, stat="identity", position="identity", ..., curvature=0.5, angle=90, ncp=5, arrow=NULL, lineend="butt", na.rm=FALSE, show.legend=NA, inherit.aes=TRUE) { 
+	layer(data=data, mapping=mapping, stat=stat, geom=GeomCurve, position=position, show.legend=show.legend, inherit.aes=inherit.aes, params=list(arrow=arrow, curvature=curvature, angle=angle, ncp=ncp, lineend=lineend, na.rm=na.rm, ...))
+}
+------SR2------
+stat_summary_bin <- function(mapping=NULL, data=NULL, geom="pointrange", position="identity", ..., fun.data=NULL, fun.y=NULL, fun.ymax=NULL, fun.ymin=NULL, fun.args=list(), na.rm=FALSE, show.legend=NA, inherit.aes=TRUE) { 
+	layer(data=data, mapping=mapping, stat=StatSummaryBin, geom=geom, position=position, show.legend=show.legend, inherit.aes=inherit.aes, params=list(fun.data=fun.data, fun.y=fun.y, fun.ymax=fun.ymax, fun.ymin=fun.ymin, fun.args=fun.args, na.rm=na.rm, ...))
+}
+CC_157 : SimilaR_1044
+------CC1------
+stat_summary_bin <- function(mapping = NULL, data = NULL,
+                             geom = "pointrange", position = "identity",
+                             ...,
+                             fun.data = NULL,
+                             fun.y = NULL,
+                             fun.ymax = NULL,
+                             fun.ymin = NULL,
+                             fun.args = list(),
+                             na.rm = FALSE,
+                             show.legend = NA,
+                             inherit.aes = TRUE) {
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = StatSummaryBin,
+    geom = geom,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      fun.data = fun.data,
+      fun.y = fun.y,
+      fun.ymax = fun.ymax,
+      fun.ymin = fun.ymin,
+      fun.args = fun.args,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------CC2------
+stat_summary_2d <- function(mapping = NULL, data = NULL,
+                            geom = "tile", position = "identity",
+                            ...,
+                            bins = 30,
+                            binwidth = NULL,
+                            drop = TRUE,
+                            fun = "mean",
+                            fun.args = list(),
+                            na.rm = FALSE,
+                            show.legend = NA,
+                            inherit.aes = TRUE) {
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = StatSummary2d,
+    geom = geom,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      bins = bins,
+      binwidth = binwidth,
+      drop = drop,
+      fun = fun,
+      fun.args = fun.args,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------SR1------
+stat_summary_2d <- function(mapping=NULL, data=NULL, geom="tile", position="identity", ..., bins=30, binwidth=NULL, drop=TRUE, fun="mean", fun.args=list(), na.rm=FALSE, show.legend=NA, inherit.aes=TRUE) { 
+	layer(data=data, mapping=mapping, stat=StatSummary2d, geom=geom, position=position, show.legend=show.legend, inherit.aes=inherit.aes, params=list(bins=bins, binwidth=binwidth, drop=drop, fun=fun, fun.args=fun.args, na.rm=na.rm, ...))
+}
+------SR2------
+stat_summary_bin <- function(mapping=NULL, data=NULL, geom="pointrange", position="identity", ..., fun.data=NULL, fun.y=NULL, fun.ymax=NULL, fun.ymin=NULL, fun.args=list(), na.rm=FALSE, show.legend=NA, inherit.aes=TRUE) { 
+	layer(data=data, mapping=mapping, stat=StatSummaryBin, geom=geom, position=position, show.legend=show.legend, inherit.aes=inherit.aes, params=list(fun.data=fun.data, fun.y=fun.y, fun.ymax=fun.ymax, fun.ymin=fun.ymin, fun.args=fun.args, na.rm=na.rm, ...))
+}
+CC_167 : SimilaR_1389
+------CC1------
+stat_summary_bin <- function(mapping = NULL, data = NULL,
+                             geom = "pointrange", position = "identity",
+                             ...,
+                             fun.data = NULL,
+                             fun.y = NULL,
+                             fun.ymax = NULL,
+                             fun.ymin = NULL,
+                             fun.args = list(),
+                             na.rm = FALSE,
+                             show.legend = NA,
+                             inherit.aes = TRUE) {
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = StatSummaryBin,
+    geom = geom,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      fun.data = fun.data,
+      fun.y = fun.y,
+      fun.ymax = fun.ymax,
+      fun.ymin = fun.ymin,
+      fun.args = fun.args,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------CC2------
+geom_raster <- function(mapping = NULL, data = NULL,
+                        stat = "identity", position = "identity",
+                        ...,
+                        hjust = 0.5,
+                        vjust = 0.5,
+                        interpolate = FALSE,
+                        na.rm = FALSE,
+                        show.legend = NA,
+                        inherit.aes = TRUE)
+{
+  stopifnot(is.numeric(hjust), length(hjust) == 1)
+  stopifnot(is.numeric(vjust), length(vjust) == 1)
+
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = stat,
+    geom = GeomRaster,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      hjust = hjust,
+      vjust = vjust,
+      interpolate = interpolate,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------SR1------
+layer(data=data, mapping=mapping, stat=StatSummaryBin, geom=geom, position=position, show.legend=show.legend, inherit.aes=inherit.aes, params=list(fun.data=fun.data, fun.y=fun.y, fun.ymax=fun.ymax, fun.ymin=fun.ymin, fun.args=fun.args, na.rm=na.rm, ...))
+------SR2------
+layer(data=data, mapping=mapping, stat=stat, geom=GeomRaster, position=position, show.legend=show.legend, inherit.aes=inherit.aes, params=list(hjust=hjust, vjust=vjust, interpolate=interpolate, na.rm=na.rm, ...))
+CC_168 : SimilaR_1300
+------CC1------
+stat_summary_bin <- function(mapping = NULL, data = NULL,
+                             geom = "pointrange", position = "identity",
+                             ...,
+                             fun.data = NULL,
+                             fun.y = NULL,
+                             fun.ymax = NULL,
+                             fun.ymin = NULL,
+                             fun.args = list(),
+                             na.rm = FALSE,
+                             show.legend = NA,
+                             inherit.aes = TRUE) {
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = StatSummaryBin,
+    geom = geom,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      fun.data = fun.data,
+      fun.y = fun.y,
+      fun.ymax = fun.ymax,
+      fun.ymin = fun.ymin,
+      fun.args = fun.args,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------CC2------
+stat_bin <- function(mapping = NULL, data = NULL,
+                     geom = "bar", position = "stack",
+                     ...,
+                     binwidth = NULL,
+                     bins = NULL,
+                     center = NULL,
+                     boundary = NULL,
+                     closed = c("right", "left"),
+                     pad = FALSE,
+                     na.rm = FALSE,
+                     show.legend = NA,
+                     inherit.aes = TRUE) {
+
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = StatBin,
+    geom = geom,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      binwidth = binwidth,
+      bins = bins,
+      center = center,
+      boundary = boundary,
+      closed = closed,
+      pad = pad,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------SR1------
+stat_bin <- function(mapping=NULL, data=NULL, geom="bar", position="stack", ..., binwidth=NULL, bins=NULL, center=NULL, boundary=NULL, closed=c("right", "left"), pad=FALSE, na.rm=FALSE, show.legend=NA, inherit.aes=TRUE) { 
+	layer(data=data, mapping=mapping, stat=StatBin, geom=geom, position=position, show.legend=show.legend, inherit.aes=inherit.aes, params=list(binwidth=binwidth, bins=bins, center=center, boundary=boundary, closed=closed, pad=pad, na.rm=na.rm, ...))
+}
+------SR2------
+stat_summary_bin <- function(mapping=NULL, data=NULL, geom="pointrange", position="identity", ..., fun.data=NULL, fun.y=NULL, fun.ymax=NULL, fun.ymin=NULL, fun.args=list(), na.rm=FALSE, show.legend=NA, inherit.aes=TRUE) { 
+	layer(data=data, mapping=mapping, stat=StatSummaryBin, geom=geom, position=position, show.legend=show.legend, inherit.aes=inherit.aes, params=list(fun.data=fun.data, fun.y=fun.y, fun.ymax=fun.ymax, fun.ymin=fun.ymin, fun.args=fun.args, na.rm=na.rm, ...))
+}
+CC_172 : SimilaR_1747
+------CC1------
+stat_summary_hex <- function(mapping = NULL, data = NULL,
+                             geom = "hex", position = "identity",
+                             ...,
+                             bins = 30,
+                             binwidth = NULL,
+                             drop = TRUE,
+                             fun = "mean",
+                             fun.args = list(),
+                             na.rm = FALSE,
+                             show.legend = NA,
+                             inherit.aes = TRUE) {
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = StatSummaryHex,
+    geom = geom,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      bins = bins,
+      binwidth = binwidth,
+      drop = drop,
+      fun = fun,
+      fun.args = fun.args,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------CC2------
+stat_quantile <- function(mapping = NULL, data = NULL,
+                          geom = "quantile", position = "identity",
+                          ...,
+                          quantiles = c(0.25, 0.5, 0.75),
+                          formula = NULL,
+                          method = "rq",
+                          method.args = list(),
+                          na.rm = FALSE,
+                          show.legend = NA,
+                          inherit.aes = TRUE) {
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = StatQuantile,
+    geom = geom,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      quantiles = quantiles,
+      formula = formula,
+      method = method,
+      method.args = method.args,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------SR1------
+stat_quantile <- function(mapping=NULL, data=NULL, geom="quantile", position="identity", ..., quantiles=c(0.25, 0.5, 0.75), formula=NULL, method="rq", method.args=list(), na.rm=FALSE, show.legend=NA, inherit.aes=TRUE) { 
+	layer(data=data, mapping=mapping, stat=StatQuantile, geom=geom, position=position, show.legend=show.legend, inherit.aes=inherit.aes, params=list(quantiles=quantiles, formula=formula, method=method, method.args=method.args, na.rm=na.rm, ...))
+}
+------SR2------
+stat_summary_hex <- function(mapping=NULL, data=NULL, geom="hex", position="identity", ..., bins=30, binwidth=NULL, drop=TRUE, fun="mean", fun.args=list(), na.rm=FALSE, show.legend=NA, inherit.aes=TRUE) { 
+	layer(data=data, mapping=mapping, stat=StatSummaryHex, geom=geom, position=position, show.legend=show.legend, inherit.aes=inherit.aes, params=list(bins=bins, binwidth=binwidth, drop=drop, fun=fun, fun.args=fun.args, na.rm=na.rm, ...))
+}
+CC_173 : SimilaR_743
+------CC1------
+stat_summary_hex <- function(mapping = NULL, data = NULL,
+                             geom = "hex", position = "identity",
+                             ...,
+                             bins = 30,
+                             binwidth = NULL,
+                             drop = TRUE,
+                             fun = "mean",
+                             fun.args = list(),
+                             na.rm = FALSE,
+                             show.legend = NA,
+                             inherit.aes = TRUE) {
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = StatSummaryHex,
+    geom = geom,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      bins = bins,
+      binwidth = binwidth,
+      drop = drop,
+      fun = fun,
+      fun.args = fun.args,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------CC2------
+stat_summary_bin <- function(mapping = NULL, data = NULL,
+                             geom = "pointrange", position = "identity",
+                             ...,
+                             fun.data = NULL,
+                             fun.y = NULL,
+                             fun.ymax = NULL,
+                             fun.ymin = NULL,
+                             fun.args = list(),
+                             na.rm = FALSE,
+                             show.legend = NA,
+                             inherit.aes = TRUE) {
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = StatSummaryBin,
+    geom = geom,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      fun.data = fun.data,
+      fun.y = fun.y,
+      fun.ymax = fun.ymax,
+      fun.ymin = fun.ymin,
+      fun.args = fun.args,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------SR1------
+stat_summary_hex <- function(mapping=NULL, data=NULL, geom="hex", position="identity", ..., bins=30, binwidth=NULL, drop=TRUE, fun="mean", fun.args=list(), na.rm=FALSE, show.legend=NA, inherit.aes=TRUE) { 
+	layer(data=data, mapping=mapping, stat=StatSummaryHex, geom=geom, position=position, show.legend=show.legend, inherit.aes=inherit.aes, params=list(bins=bins, binwidth=binwidth, drop=drop, fun=fun, fun.args=fun.args, na.rm=na.rm, ...))
+}
+------SR2------
+stat_summary_bin <- function(mapping=NULL, data=NULL, geom="pointrange", position="identity", ..., fun.data=NULL, fun.y=NULL, fun.ymax=NULL, fun.ymin=NULL, fun.args=list(), na.rm=FALSE, show.legend=NA, inherit.aes=TRUE) { 
+	layer(data=data, mapping=mapping, stat=StatSummaryBin, geom=geom, position=position, show.legend=show.legend, inherit.aes=inherit.aes, params=list(fun.data=fun.data, fun.y=fun.y, fun.ymax=fun.ymax, fun.ymin=fun.ymin, fun.args=fun.args, na.rm=na.rm, ...))
+}
+CC_174 : SimilaR_667
+------CC1------
+stat_summary_hex <- function(mapping = NULL, data = NULL,
+                             geom = "hex", position = "identity",
+                             ...,
+                             bins = 30,
+                             binwidth = NULL,
+                             drop = TRUE,
+                             fun = "mean",
+                             fun.args = list(),
+                             na.rm = FALSE,
+                             show.legend = NA,
+                             inherit.aes = TRUE) {
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = StatSummaryHex,
+    geom = geom,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      bins = bins,
+      binwidth = binwidth,
+      drop = drop,
+      fun = fun,
+      fun.args = fun.args,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------CC2------
+geom_curve <- function(mapping = NULL, data = NULL,
+                       stat = "identity", position = "identity",
+                       ...,
+                       curvature = 0.5,
+                       angle = 90,
+                       ncp = 5,
+                       arrow = NULL,
+                       lineend = "butt",
+                       na.rm = FALSE,
+                       show.legend = NA,
+                       inherit.aes = TRUE) {
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = stat,
+    geom = GeomCurve,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      arrow = arrow,
+      curvature = curvature,
+      angle = angle,
+      ncp = ncp,
+      lineend = lineend,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------SR1------
+stat_summary_hex <- function(mapping=NULL, data=NULL, geom="hex", position="identity", ..., bins=30, binwidth=NULL, drop=TRUE, fun="mean", fun.args=list(), na.rm=FALSE, show.legend=NA, inherit.aes=TRUE) { 
+	layer(data=data, mapping=mapping, stat=StatSummaryHex, geom=geom, position=position, show.legend=show.legend, inherit.aes=inherit.aes, params=list(bins=bins, binwidth=binwidth, drop=drop, fun=fun, fun.args=fun.args, na.rm=na.rm, ...))
+}
+------SR2------
+geom_curve <- function(mapping=NULL, data=NULL, stat="identity", position="identity", ..., curvature=0.5, angle=90, ncp=5, arrow=NULL, lineend="butt", na.rm=FALSE, show.legend=NA, inherit.aes=TRUE) { 
+	layer(data=data, mapping=mapping, stat=stat, geom=GeomCurve, position=position, show.legend=show.legend, inherit.aes=inherit.aes, params=list(arrow=arrow, curvature=curvature, angle=angle, ncp=ncp, lineend=lineend, na.rm=na.rm, ...))
+}
+CC_175 : SimilaR_661
+------CC1------
+stat_summary_hex <- function(mapping = NULL, data = NULL,
+                             geom = "hex", position = "identity",
+                             ...,
+                             bins = 30,
+                             binwidth = NULL,
+                             drop = TRUE,
+                             fun = "mean",
+                             fun.args = list(),
+                             na.rm = FALSE,
+                             show.legend = NA,
+                             inherit.aes = TRUE) {
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = StatSummaryHex,
+    geom = geom,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      bins = bins,
+      binwidth = binwidth,
+      drop = drop,
+      fun = fun,
+      fun.args = fun.args,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------CC2------
+stat_summary_2d <- function(mapping = NULL, data = NULL,
+                            geom = "tile", position = "identity",
+                            ...,
+                            bins = 30,
+                            binwidth = NULL,
+                            drop = TRUE,
+                            fun = "mean",
+                            fun.args = list(),
+                            na.rm = FALSE,
+                            show.legend = NA,
+                            inherit.aes = TRUE) {
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = StatSummary2d,
+    geom = geom,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      bins = bins,
+      binwidth = binwidth,
+      drop = drop,
+      fun = fun,
+      fun.args = fun.args,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------SR1------
+stat_summary_hex <- function(mapping=NULL, data=NULL, geom="hex", position="identity", ..., bins=30, binwidth=NULL, drop=TRUE, fun="mean", fun.args=list(), na.rm=FALSE, show.legend=NA, inherit.aes=TRUE) { 
+	layer(data=data, mapping=mapping, stat=StatSummaryHex, geom=geom, position=position, show.legend=show.legend, inherit.aes=inherit.aes, params=list(bins=bins, binwidth=binwidth, drop=drop, fun=fun, fun.args=fun.args, na.rm=na.rm, ...))
+}
+------SR2------
+stat_summary_2d <- function(mapping=NULL, data=NULL, geom="tile", position="identity", ..., bins=30, binwidth=NULL, drop=TRUE, fun="mean", fun.args=list(), na.rm=FALSE, show.legend=NA, inherit.aes=TRUE) { 
+	layer(data=data, mapping=mapping, stat=StatSummary2d, geom=geom, position=position, show.legend=show.legend, inherit.aes=inherit.aes, params=list(bins=bins, binwidth=binwidth, drop=drop, fun=fun, fun.args=fun.args, na.rm=na.rm, ...))
+}
+CC_183 : SimilaR_1813
+------CC1------
+stat_summary <- function(mapping = NULL, data = NULL,
+                         geom = "pointrange", position = "identity",
+                         ...,
+                         fun.data = NULL,
+                         fun.y = NULL,
+                         fun.ymax = NULL,
+                         fun.ymin = NULL,
+                         fun.args = list(),
+                         na.rm = FALSE,
+                         show.legend = NA,
+                         inherit.aes = TRUE) {
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = StatSummary,
+    geom = geom,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      fun.data = fun.data,
+      fun.y = fun.y,
+      fun.ymax = fun.ymax,
+      fun.ymin = fun.ymin,
+      fun.args = fun.args,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------CC2------
+stat_quantile <- function(mapping = NULL, data = NULL,
+                          geom = "quantile", position = "identity",
+                          ...,
+                          quantiles = c(0.25, 0.5, 0.75),
+                          formula = NULL,
+                          method = "rq",
+                          method.args = list(),
+                          na.rm = FALSE,
+                          show.legend = NA,
+                          inherit.aes = TRUE) {
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = StatQuantile,
+    geom = geom,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      quantiles = quantiles,
+      formula = formula,
+      method = method,
+      method.args = method.args,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------SR1------
+stat_quantile <- function(mapping=NULL, data=NULL, geom="quantile", position="identity", ..., quantiles=c(0.25, 0.5, 0.75), formula=NULL, method="rq", method.args=list(), na.rm=FALSE, show.legend=NA, inherit.aes=TRUE) { 
+	layer(data=data, mapping=mapping, stat=StatQuantile, geom=geom, position=position, show.legend=show.legend, inherit.aes=inherit.aes, params=list(quantiles=quantiles, formula=formula, method=method, method.args=method.args, na.rm=na.rm, ...))
+}
+------SR2------
+stat_summary <- function(mapping=NULL, data=NULL, geom="pointrange", position="identity", ..., fun.data=NULL, fun.y=NULL, fun.ymax=NULL, fun.ymin=NULL, fun.args=list(), na.rm=FALSE, show.legend=NA, inherit.aes=TRUE) { 
+	layer(data=data, mapping=mapping, stat=StatSummary, geom=geom, position=position, show.legend=show.legend, inherit.aes=inherit.aes, params=list(fun.data=fun.data, fun.y=fun.y, fun.ymax=fun.ymax, fun.ymin=fun.ymin, fun.args=fun.args, na.rm=na.rm, ...))
+}
+CC_184 : SimilaR_752
+------CC1------
+stat_summary_hex <- function(mapping = NULL, data = NULL,
+                             geom = "hex", position = "identity",
+                             ...,
+                             bins = 30,
+                             binwidth = NULL,
+                             drop = TRUE,
+                             fun = "mean",
+                             fun.args = list(),
+                             na.rm = FALSE,
+                             show.legend = NA,
+                             inherit.aes = TRUE) {
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = StatSummaryHex,
+    geom = geom,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      bins = bins,
+      binwidth = binwidth,
+      drop = drop,
+      fun = fun,
+      fun.args = fun.args,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------CC2------
+geom_raster <- function(mapping = NULL, data = NULL,
+                        stat = "identity", position = "identity",
+                        ...,
+                        hjust = 0.5,
+                        vjust = 0.5,
+                        interpolate = FALSE,
+                        na.rm = FALSE,
+                        show.legend = NA,
+                        inherit.aes = TRUE)
+{
+  stopifnot(is.numeric(hjust), length(hjust) == 1)
+  stopifnot(is.numeric(vjust), length(vjust) == 1)
+
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = stat,
+    geom = GeomRaster,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      hjust = hjust,
+      vjust = vjust,
+      interpolate = interpolate,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------SR1------
+layer(data=data, mapping=mapping, stat=StatSummaryHex, geom=geom, position=position, show.legend=show.legend, inherit.aes=inherit.aes, params=list(bins=bins, binwidth=binwidth, drop=drop, fun=fun, fun.args=fun.args, na.rm=na.rm, ...))
+------SR2------
+layer(data=data, mapping=mapping, stat=stat, geom=GeomRaster, position=position, show.legend=show.legend, inherit.aes=inherit.aes, params=list(hjust=hjust, vjust=vjust, interpolate=interpolate, na.rm=na.rm, ...))
+CC_185 : SimilaR_1376
+------CC1------
+stat_summary <- function(mapping = NULL, data = NULL,
+                         geom = "pointrange", position = "identity",
+                         ...,
+                         fun.data = NULL,
+                         fun.y = NULL,
+                         fun.ymax = NULL,
+                         fun.ymin = NULL,
+                         fun.args = list(),
+                         na.rm = FALSE,
+                         show.legend = NA,
+                         inherit.aes = TRUE) {
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = StatSummary,
+    geom = geom,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      fun.data = fun.data,
+      fun.y = fun.y,
+      fun.ymax = fun.ymax,
+      fun.ymin = fun.ymin,
+      fun.args = fun.args,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------CC2------
+stat_summary_bin <- function(mapping = NULL, data = NULL,
+                             geom = "pointrange", position = "identity",
+                             ...,
+                             fun.data = NULL,
+                             fun.y = NULL,
+                             fun.ymax = NULL,
+                             fun.ymin = NULL,
+                             fun.args = list(),
+                             na.rm = FALSE,
+                             show.legend = NA,
+                             inherit.aes = TRUE) {
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = StatSummaryBin,
+    geom = geom,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      fun.data = fun.data,
+      fun.y = fun.y,
+      fun.ymax = fun.ymax,
+      fun.ymin = fun.ymin,
+      fun.args = fun.args,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------SR1------
+stat_summary <- function(mapping=NULL, data=NULL, geom="pointrange", position="identity", ..., fun.data=NULL, fun.y=NULL, fun.ymax=NULL, fun.ymin=NULL, fun.args=list(), na.rm=FALSE, show.legend=NA, inherit.aes=TRUE) { 
+	layer(data=data, mapping=mapping, stat=StatSummary, geom=geom, position=position, show.legend=show.legend, inherit.aes=inherit.aes, params=list(fun.data=fun.data, fun.y=fun.y, fun.ymax=fun.ymax, fun.ymin=fun.ymin, fun.args=fun.args, na.rm=na.rm, ...))
+}
+------SR2------
+stat_summary_bin <- function(mapping=NULL, data=NULL, geom="pointrange", position="identity", ..., fun.data=NULL, fun.y=NULL, fun.ymax=NULL, fun.ymin=NULL, fun.args=list(), na.rm=FALSE, show.legend=NA, inherit.aes=TRUE) { 
+	layer(data=data, mapping=mapping, stat=StatSummaryBin, geom=geom, position=position, show.legend=show.legend, inherit.aes=inherit.aes, params=list(fun.data=fun.data, fun.y=fun.y, fun.ymax=fun.ymax, fun.ymin=fun.ymin, fun.args=fun.args, na.rm=na.rm, ...))
+}
+CC_186 : SimilaR_1149
+------CC1------
+stat_summary <- function(mapping = NULL, data = NULL,
+                         geom = "pointrange", position = "identity",
+                         ...,
+                         fun.data = NULL,
+                         fun.y = NULL,
+                         fun.ymax = NULL,
+                         fun.ymin = NULL,
+                         fun.args = list(),
+                         na.rm = FALSE,
+                         show.legend = NA,
+                         inherit.aes = TRUE) {
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = StatSummary,
+    geom = geom,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      fun.data = fun.data,
+      fun.y = fun.y,
+      fun.ymax = fun.ymax,
+      fun.ymin = fun.ymin,
+      fun.args = fun.args,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------CC2------
+geom_curve <- function(mapping = NULL, data = NULL,
+                       stat = "identity", position = "identity",
+                       ...,
+                       curvature = 0.5,
+                       angle = 90,
+                       ncp = 5,
+                       arrow = NULL,
+                       lineend = "butt",
+                       na.rm = FALSE,
+                       show.legend = NA,
+                       inherit.aes = TRUE) {
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = stat,
+    geom = GeomCurve,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      arrow = arrow,
+      curvature = curvature,
+      angle = angle,
+      ncp = ncp,
+      lineend = lineend,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------SR1------
+geom_curve <- function(mapping=NULL, data=NULL, stat="identity", position="identity", ..., curvature=0.5, angle=90, ncp=5, arrow=NULL, lineend="butt", na.rm=FALSE, show.legend=NA, inherit.aes=TRUE) { 
+	layer(data=data, mapping=mapping, stat=stat, geom=GeomCurve, position=position, show.legend=show.legend, inherit.aes=inherit.aes, params=list(arrow=arrow, curvature=curvature, angle=angle, ncp=ncp, lineend=lineend, na.rm=na.rm, ...))
+}
+------SR2------
+stat_summary <- function(mapping=NULL, data=NULL, geom="pointrange", position="identity", ..., fun.data=NULL, fun.y=NULL, fun.ymax=NULL, fun.ymin=NULL, fun.args=list(), na.rm=FALSE, show.legend=NA, inherit.aes=TRUE) { 
+	layer(data=data, mapping=mapping, stat=StatSummary, geom=geom, position=position, show.legend=show.legend, inherit.aes=inherit.aes, params=list(fun.data=fun.data, fun.y=fun.y, fun.ymax=fun.ymax, fun.ymin=fun.ymin, fun.args=fun.args, na.rm=na.rm, ...))
+}
+CC_187 : SimilaR_687
+------CC1------
+stat_summary_hex <- function(mapping = NULL, data = NULL,
+                             geom = "hex", position = "identity",
+                             ...,
+                             bins = 30,
+                             binwidth = NULL,
+                             drop = TRUE,
+                             fun = "mean",
+                             fun.args = list(),
+                             na.rm = FALSE,
+                             show.legend = NA,
+                             inherit.aes = TRUE) {
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = StatSummaryHex,
+    geom = geom,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      bins = bins,
+      binwidth = binwidth,
+      drop = drop,
+      fun = fun,
+      fun.args = fun.args,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------CC2------
+stat_bin <- function(mapping = NULL, data = NULL,
+                     geom = "bar", position = "stack",
+                     ...,
+                     binwidth = NULL,
+                     bins = NULL,
+                     center = NULL,
+                     boundary = NULL,
+                     closed = c("right", "left"),
+                     pad = FALSE,
+                     na.rm = FALSE,
+                     show.legend = NA,
+                     inherit.aes = TRUE) {
+
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = StatBin,
+    geom = geom,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      binwidth = binwidth,
+      bins = bins,
+      center = center,
+      boundary = boundary,
+      closed = closed,
+      pad = pad,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------SR1------
+stat_summary_hex <- function(mapping=NULL, data=NULL, geom="hex", position="identity", ..., bins=30, binwidth=NULL, drop=TRUE, fun="mean", fun.args=list(), na.rm=FALSE, show.legend=NA, inherit.aes=TRUE) { 
+	layer(data=data, mapping=mapping, stat=StatSummaryHex, geom=geom, position=position, show.legend=show.legend, inherit.aes=inherit.aes, params=list(bins=bins, binwidth=binwidth, drop=drop, fun=fun, fun.args=fun.args, na.rm=na.rm, ...))
+}
+------SR2------
+stat_bin <- function(mapping=NULL, data=NULL, geom="bar", position="stack", ..., binwidth=NULL, bins=NULL, center=NULL, boundary=NULL, closed=c("right", "left"), pad=FALSE, na.rm=FALSE, show.legend=NA, inherit.aes=TRUE) { 
+	layer(data=data, mapping=mapping, stat=StatBin, geom=geom, position=position, show.legend=show.legend, inherit.aes=inherit.aes, params=list(binwidth=binwidth, bins=bins, center=center, boundary=boundary, closed=closed, pad=pad, na.rm=na.rm, ...))
+}
+CC_188 : SimilaR_1042
+------CC1------
+stat_summary <- function(mapping = NULL, data = NULL,
+                         geom = "pointrange", position = "identity",
+                         ...,
+                         fun.data = NULL,
+                         fun.y = NULL,
+                         fun.ymax = NULL,
+                         fun.ymin = NULL,
+                         fun.args = list(),
+                         na.rm = FALSE,
+                         show.legend = NA,
+                         inherit.aes = TRUE) {
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = StatSummary,
+    geom = geom,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      fun.data = fun.data,
+      fun.y = fun.y,
+      fun.ymax = fun.ymax,
+      fun.ymin = fun.ymin,
+      fun.args = fun.args,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------CC2------
+stat_summary_2d <- function(mapping = NULL, data = NULL,
+                            geom = "tile", position = "identity",
+                            ...,
+                            bins = 30,
+                            binwidth = NULL,
+                            drop = TRUE,
+                            fun = "mean",
+                            fun.args = list(),
+                            na.rm = FALSE,
+                            show.legend = NA,
+                            inherit.aes = TRUE) {
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = StatSummary2d,
+    geom = geom,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      bins = bins,
+      binwidth = binwidth,
+      drop = drop,
+      fun = fun,
+      fun.args = fun.args,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------SR1------
+stat_summary_2d <- function(mapping=NULL, data=NULL, geom="tile", position="identity", ..., bins=30, binwidth=NULL, drop=TRUE, fun="mean", fun.args=list(), na.rm=FALSE, show.legend=NA, inherit.aes=TRUE) { 
+	layer(data=data, mapping=mapping, stat=StatSummary2d, geom=geom, position=position, show.legend=show.legend, inherit.aes=inherit.aes, params=list(bins=bins, binwidth=binwidth, drop=drop, fun=fun, fun.args=fun.args, na.rm=na.rm, ...))
+}
+------SR2------
+stat_summary <- function(mapping=NULL, data=NULL, geom="pointrange", position="identity", ..., fun.data=NULL, fun.y=NULL, fun.ymax=NULL, fun.ymin=NULL, fun.args=list(), na.rm=FALSE, show.legend=NA, inherit.aes=TRUE) { 
+	layer(data=data, mapping=mapping, stat=StatSummary, geom=geom, position=position, show.legend=show.legend, inherit.aes=inherit.aes, params=list(fun.data=fun.data, fun.y=fun.y, fun.ymax=fun.ymax, fun.ymin=fun.ymin, fun.args=fun.args, na.rm=na.rm, ...))
+}
+CC_189 : SimilaR_739
+------CC1------
+stat_summary <- function(mapping = NULL, data = NULL,
+                         geom = "pointrange", position = "identity",
+                         ...,
+                         fun.data = NULL,
+                         fun.y = NULL,
+                         fun.ymax = NULL,
+                         fun.ymin = NULL,
+                         fun.args = list(),
+                         na.rm = FALSE,
+                         show.legend = NA,
+                         inherit.aes = TRUE) {
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = StatSummary,
+    geom = geom,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      fun.data = fun.data,
+      fun.y = fun.y,
+      fun.ymax = fun.ymax,
+      fun.ymin = fun.ymin,
+      fun.args = fun.args,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------CC2------
+stat_summary_hex <- function(mapping = NULL, data = NULL,
+                             geom = "hex", position = "identity",
+                             ...,
+                             bins = 30,
+                             binwidth = NULL,
+                             drop = TRUE,
+                             fun = "mean",
+                             fun.args = list(),
+                             na.rm = FALSE,
+                             show.legend = NA,
+                             inherit.aes = TRUE) {
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = StatSummaryHex,
+    geom = geom,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      bins = bins,
+      binwidth = binwidth,
+      drop = drop,
+      fun = fun,
+      fun.args = fun.args,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------SR1------
+stat_summary_hex <- function(mapping=NULL, data=NULL, geom="hex", position="identity", ..., bins=30, binwidth=NULL, drop=TRUE, fun="mean", fun.args=list(), na.rm=FALSE, show.legend=NA, inherit.aes=TRUE) { 
+	layer(data=data, mapping=mapping, stat=StatSummaryHex, geom=geom, position=position, show.legend=show.legend, inherit.aes=inherit.aes, params=list(bins=bins, binwidth=binwidth, drop=drop, fun=fun, fun.args=fun.args, na.rm=na.rm, ...))
+}
+------SR2------
+stat_summary <- function(mapping=NULL, data=NULL, geom="pointrange", position="identity", ..., fun.data=NULL, fun.y=NULL, fun.ymax=NULL, fun.ymin=NULL, fun.args=list(), na.rm=FALSE, show.legend=NA, inherit.aes=TRUE) { 
+	layer(data=data, mapping=mapping, stat=StatSummary, geom=geom, position=position, show.legend=show.legend, inherit.aes=inherit.aes, params=list(fun.data=fun.data, fun.y=fun.y, fun.ymax=fun.ymax, fun.ymin=fun.ymin, fun.args=fun.args, na.rm=na.rm, ...))
+}
+CC_209 : SimilaR_1380
+------CC1------
+stat_summary <- function(mapping = NULL, data = NULL,
+                         geom = "pointrange", position = "identity",
+                         ...,
+                         fun.data = NULL,
+                         fun.y = NULL,
+                         fun.ymax = NULL,
+                         fun.ymin = NULL,
+                         fun.args = list(),
+                         na.rm = FALSE,
+                         show.legend = NA,
+                         inherit.aes = TRUE) {
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = StatSummary,
+    geom = geom,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      fun.data = fun.data,
+      fun.y = fun.y,
+      fun.ymax = fun.ymax,
+      fun.ymin = fun.ymin,
+      fun.args = fun.args,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------CC2------
+geom_raster <- function(mapping = NULL, data = NULL,
+                        stat = "identity", position = "identity",
+                        ...,
+                        hjust = 0.5,
+                        vjust = 0.5,
+                        interpolate = FALSE,
+                        na.rm = FALSE,
+                        show.legend = NA,
+                        inherit.aes = TRUE)
+{
+  stopifnot(is.numeric(hjust), length(hjust) == 1)
+  stopifnot(is.numeric(vjust), length(vjust) == 1)
+
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = stat,
+    geom = GeomRaster,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      hjust = hjust,
+      vjust = vjust,
+      interpolate = interpolate,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------SR1------
+layer(data=data, mapping=mapping, stat=StatSummary, geom=geom, position=position, show.legend=show.legend, inherit.aes=inherit.aes, params=list(fun.data=fun.data, fun.y=fun.y, fun.ymax=fun.ymax, fun.ymin=fun.ymin, fun.args=fun.args, na.rm=na.rm, ...))
+------SR2------
+layer(data=data, mapping=mapping, stat=stat, geom=GeomRaster, position=position, show.legend=show.legend, inherit.aes=inherit.aes, params=list(hjust=hjust, vjust=vjust, interpolate=interpolate, na.rm=na.rm, ...))
+CC_210 : SimilaR_1298
+------CC1------
+stat_summary <- function(mapping = NULL, data = NULL,
+                         geom = "pointrange", position = "identity",
+                         ...,
+                         fun.data = NULL,
+                         fun.y = NULL,
+                         fun.ymax = NULL,
+                         fun.ymin = NULL,
+                         fun.args = list(),
+                         na.rm = FALSE,
+                         show.legend = NA,
+                         inherit.aes = TRUE) {
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = StatSummary,
+    geom = geom,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      fun.data = fun.data,
+      fun.y = fun.y,
+      fun.ymax = fun.ymax,
+      fun.ymin = fun.ymin,
+      fun.args = fun.args,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------CC2------
+stat_bin <- function(mapping = NULL, data = NULL,
+                     geom = "bar", position = "stack",
+                     ...,
+                     binwidth = NULL,
+                     bins = NULL,
+                     center = NULL,
+                     boundary = NULL,
+                     closed = c("right", "left"),
+                     pad = FALSE,
+                     na.rm = FALSE,
+                     show.legend = NA,
+                     inherit.aes = TRUE) {
+
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = StatBin,
+    geom = geom,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      binwidth = binwidth,
+      bins = bins,
+      center = center,
+      boundary = boundary,
+      closed = closed,
+      pad = pad,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+------SR1------
+stat_bin <- function(mapping=NULL, data=NULL, geom="bar", position="stack", ..., binwidth=NULL, bins=NULL, center=NULL, boundary=NULL, closed=c("right", "left"), pad=FALSE, na.rm=FALSE, show.legend=NA, inherit.aes=TRUE) { 
+	layer(data=data, mapping=mapping, stat=StatBin, geom=geom, position=position, show.legend=show.legend, inherit.aes=inherit.aes, params=list(binwidth=binwidth, bins=bins, center=center, boundary=boundary, closed=closed, pad=pad, na.rm=na.rm, ...))
+}
+------SR2------
+stat_summary <- function(mapping=NULL, data=NULL, geom="pointrange", position="identity", ..., fun.data=NULL, fun.y=NULL, fun.ymax=NULL, fun.ymin=NULL, fun.args=list(), na.rm=FALSE, show.legend=NA, inherit.aes=TRUE) { 
+	layer(data=data, mapping=mapping, stat=StatSummary, geom=geom, position=position, show.legend=show.legend, inherit.aes=inherit.aes, params=list(fun.data=fun.data, fun.y=fun.y, fun.ymax=fun.ymax, fun.ymin=fun.ymin, fun.args=fun.args, na.rm=na.rm, ...))
+}
+
+CC_329 : SimilaR_1372
+------CC1------
+pdf_document <- function(toc = FALSE,
+                         toc_depth = 2,
+                         number_sections = FALSE,
+                         fig_width = 6.5,
+                         fig_height = 4.5,
+                         fig_crop = TRUE,
+                         fig_caption = TRUE,
+                         dev = 'pdf',
+                         df_print = "default",
+                         highlight = "default",
+                         template = "default",
+                         keep_tex = FALSE,
+                         latex_engine = "pdflatex",
+                         citation_package = c("none", "natbib", "biblatex"),
+                         includes = NULL,
+                         md_extensions = NULL,
+                         pandoc_args = NULL,
+                         extra_dependencies = NULL) {
+
+  # base pandoc options for all PDF output
+  args <- c()
+
+  # table of contents
+  args <- c(args, pandoc_toc_args(toc, toc_depth))
+
+  # template path and assets
+  if (identical(template, "default")) {
+
+    pandoc_available(error = TRUE)
+    # choose the right template
+    version <- pandoc_version()
+    if (version >= "1.17.0.2")
+      latex_template <- "default-1.17.0.2.tex"
+    else if (version >= "1.15.2")
+      latex_template <- "default-1.15.2.tex"
+    else if (version >= "1.14")
+      latex_template <- "default-1.14.tex"
+    else
+      latex_template <- "default.tex"
+
+    # add to args
+    args <- c(args, "--template",
+              pandoc_path_arg(rmarkdown_system_file(paste0("rmd/latex/",
+                                                           latex_template))))
+
+  } else if (!is.null(template)) {
+    args <- c(args, "--template", pandoc_path_arg(template))
+  } else {
+    args <- c(args, "--self-contained")
+  }
+
+  # numbered sections
+  if (number_sections)
+    args <- c(args, "--number-sections")
+
+  # highlighting
+  if (!is.null(highlight))
+    highlight <- match.arg(highlight, highlighters())
+  args <- c(args, pandoc_highlight_args(highlight))
+
+  # latex engine
+  latex_engine = match.arg(latex_engine, c("pdflatex", "lualatex", "xelatex"))
+  args <- c(args, pandoc_latex_engine_args(latex_engine))
+
+  # citation package
+  citation_package <- match.arg(citation_package)
+  if (citation_package != "none") args <- c(args, paste0("--", citation_package))
+
+  # content includes
+  args <- c(args, includes_to_pandoc_args(includes))
+
+  # make sure the graphics package is always loaded
+  if (identical(template, "default")) args <- c(args, "--variable", "graphics=yes")
+
+  # args args
+  args <- c(args, pandoc_args)
+
+  saved_files_dir <- NULL
+
+  # Use filter to set pdf geometry defaults (while making sure we don't override
+  # any geometry settings already specified by the user)
+  pdf_pre_processor <- function(metadata, input_file, runtime, knit_meta, files_dir,
+                                output_dir) {
+
+    args <- c()
+
+    has_yaml_parameter <- function(text, parameter) {
+      length(grep(paste0("^", parameter, "\\s*:.*$"), text)) > 0
+    }
+
+    input_test <- readLines(input_file, warn = FALSE)
+
+    # set the margin to 1 inch if no other geometry options specified
+    if (!has_yaml_parameter(input_test, "geometry"))
+      args <- c(args, "--variable", "geometry:margin=1in")
+
+    # use titling package to change title format to be more compact by default
+    if (!has_yaml_parameter(input_test, "compact-title"))
+      args <- c(args, "--variable", "compact-title:yes")
+
+    if (length(extra_dependencies) || has_latex_dependencies(knit_meta)) {
+      extra_dependencies <- latex_dependencies(extra_dependencies)
+      all_dependencies <- append(extra_dependencies, flatten_latex_dependencies(knit_meta))
+      filename <- as_tmpfile(latex_dependencies_as_string(all_dependencies))
+      if ("header-includes" %in% names(metadata)) {
+        cat(c("", metadata[["header-includes"]]), sep = "\n", file = filename, append = TRUE)
+      }
+      args <- c(args, includes_to_pandoc_args(includes(in_header = filename)))
+    }
+    args
+  }
+
+
+  pre_processor <- function(metadata, input_file, runtime, knit_meta,
+                                files_dir, output_dir) {
+    # save files dir (for generating intermediates)
+    saved_files_dir <<- files_dir
+
+    # use a geometry filter when we are using the "default" template
+    if (identical(template, "default"))
+      pdf_pre_processor(metadata, input_file, runtime, knit_meta, files_dir,
+                        output_dir)
+    else
+      invisible(NULL)
+  }
+
+  intermediates_generator <- function(original_input, encoding,
+                                      intermediates_dir) {
+    return(pdf_intermediates_generator(saved_files_dir, original_input,
+                                        encoding, intermediates_dir))
+  }
+
+  # return format
+  output_format(
+    knitr = knitr_options_pdf(fig_width, fig_height, fig_crop, dev),
+    pandoc = pandoc_options(to = "latex",
+                            from = from_rmarkdown(fig_caption, md_extensions),
+                            args = args,
+                            latex_engine = latex_engine,
+                            keep_tex = keep_tex),
+    clean_supporting = !keep_tex,
+    df_print = df_print,
+    pre_processor = pre_processor,
+    intermediates_generator = intermediates_generator
+  )
+}
+------CC2------
+beamer_presentation <- function(toc = FALSE,
+                                slide_level = NULL,
+                                incremental = FALSE,
+                                fig_width = 10,
+                                fig_height = 7,
+                                fig_crop = TRUE,
+                                fig_caption = TRUE,
+                                dev = 'pdf',
+                                df_print = "default",
+                                theme = "default",
+                                colortheme = "default",
+                                fonttheme = "default",
+                                highlight = "default",
+                                template = "default",
+                                keep_tex = FALSE,
+                                latex_engine = "pdflatex",
+                                citation_package = c("none", "natbib", "biblatex"),
+                                self_contained = TRUE,
+                                includes = NULL,
+                                md_extensions = NULL,
+                                pandoc_args = NULL) {
+
+  # base pandoc options for all beamer output
+  args <- c()
+
+  # template path and assets
+  if (!is.null(template)) {
+    if (identical(template, "default")) template <- patch_beamer_template()
+    if (!is.null(template))
+      args <- c(args, "--template", pandoc_path_arg(template))
+  }
+
+  # table of contents
+  if (toc)
+    args <- c(args, "--table-of-contents")
+
+  # slide level
+  if (!is.null(slide_level))
+    args <- c(args, "--slide-level", as.character(slide_level))
+
+  # incremental
+  if (incremental)
+    args <- c(args, "--incremental")
+
+  # themes
+  if (!identical(theme, "default"))
+    args <- c(args, pandoc_variable_arg("theme", theme))
+  if (!identical(colortheme, "default"))
+    args <- c(args, pandoc_variable_arg("colortheme", colortheme))
+  if (!identical(fonttheme, "default"))
+    args <- c(args, pandoc_variable_arg("fonttheme", fonttheme))
+
+  # highlighting
+  if (!is.null(highlight))
+    highlight <- match.arg(highlight, highlighters())
+  args <- c(args, pandoc_highlight_args(highlight))
+
+  # latex engine
+  latex_engine = match.arg(latex_engine, c("pdflatex", "lualatex", "xelatex"))
+  args <- c(args, pandoc_latex_engine_args(latex_engine))
+
+  # citation package
+  citation_package <- match.arg(citation_package)
+  if (citation_package != "none") args <- c(args, paste0("--", citation_package))
+
+  # generate a self-contained LaTeX document (including preamble)
+  if (self_contained) args <- c(args, "--self-contained")
+
+  # content includes
+  args <- c(args, includes_to_pandoc_args(includes))
+
+  # make sure the graphics package is always loaded
+  if (identical(template, "default")) args <- c(args, "--variable", "graphics=yes")
+
+  # custom args
+  args <- c(args, pandoc_args)
+
+  # initialize saved files dir
+  saved_files_dir <- NULL
+
+  pre_processor <- function(metadata, input_file, runtime, knit_meta,
+                                files_dir, output_dir) {
+    # save files dir (for generating intermediates)
+    saved_files_dir <<- files_dir
+
+    # no-op other than caching dir location
+    invisible(NULL)
+  }
+
+  # generate intermediates (required to make resources available for publish)
+  intermediates_generator <- function(original_input, encoding,
+                                      intermediates_dir) {
+    return(pdf_intermediates_generator(saved_files_dir, original_input,
+                                        encoding, intermediates_dir))
+  }
+
+  # return format
+  output_format(
+    knitr = knitr_options_pdf(fig_width, fig_height, fig_crop, dev),
+    pandoc = pandoc_options(to = "beamer",
+                            from = from_rmarkdown(fig_caption, md_extensions),
+                            args = args,
+                            latex_engine = latex_engine,
+                            keep_tex = keep_tex),
+    pre_processor = pre_processor,
+    intermediates_generator = intermediates_generator,
+    clean_supporting = !keep_tex,
+    df_print = df_print
+  )
+}
+------SR1------
+output_format(knitr=knitr_options_pdf(fig_width, fig_height, fig_crop, dev), pandoc=pandoc_options(to="beamer", from=from_rmarkdown(fig_caption, md_extensions), args=args, latex_engine=latex_engine, keep_tex=keep_tex), pre_processor=pre_processor, intermediates_generator=intermediates_generator, clean_supporting=!keep_tex, df_print=df_print)
+------SR2------
+output_format(knitr=knitr_options_pdf(fig_width, fig_height, fig_crop, dev), pandoc=pandoc_options(to="latex", from=from_rmarkdown(fig_caption, md_extensions), args=args, latex_engine=latex_engine, keep_tex=keep_tex), clean_supporting=!keep_tex, df_print=df_print, pre_processor=pre_processor, intermediates_generator=intermediates_generator)
+
+CC_337 : SimilaR_1371
+------CC1------
+slidy_presentation <- function(incremental = FALSE,
+                               duration = NULL,
+                               footer = NULL,
+                               font_adjustment = 0,
+                               fig_width = 8,
+                               fig_height = 6,
+                               fig_retina = 2,
+                               fig_caption = TRUE,
+                               dev = 'png',
+                               df_print = "default",
+                               smart = TRUE,
+                               self_contained = TRUE,
+                               highlight = "default",
+                               mathjax = "default",
+                               template = "default",
+                               css = NULL,
+                               includes = NULL,
+                               keep_md = FALSE,
+                               lib_dir = NULL,
+                               md_extensions = NULL,
+                               pandoc_args = NULL,
+                               extra_dependencies = NULL,
+                               ...) {
+
+  # base pandoc options for all reveal.js output
+  args <- c()
+
+  # template path and assets
+  if (identical(template, "default"))
+    args <- c(args, "--template",
+              pandoc_path_arg(rmarkdown_system_file(
+                "rmd/slidy/default.html")))
+  else if (!is.null(template))
+    args <- c(args, "--template", pandoc_path_arg(template))
+
+  # html dependency for slidy
+  extra_dependencies <- append(extra_dependencies,
+                               list(html_dependency_slidy()))
+
+  # incremental
+  if (incremental)
+    args <- c(args, "--incremental")
+
+  # duration
+  if (!is.null(duration))
+    args <- c(args, pandoc_variable_arg("duration", duration))
+
+  # footer
+  if (!is.null(footer))
+    args <- c(args, pandoc_variable_arg("footer", footer))
+
+  # font size adjustment
+  if (font_adjustment != 0)
+    args <- c(args, pandoc_variable_arg("font-size-adjustment",
+                                        font_adjustment))
+
+  md_extensions <- smart_extension(smart, md_extensions)
+
+  # content includes
+  args <- c(args, includes_to_pandoc_args(includes))
+
+  # pagedtables
+  if (identical(df_print, "paged")) {
+    extra_dependencies <- append(extra_dependencies,
+                                 list(html_dependency_pagedtable()))
+  }
+
+  # additional css
+  for (css_file in css)
+    args <- c(args, "--css", pandoc_path_arg(css_file))
+
+  # pre-processor for arguments that may depend on the name of the
+  # the input file (e.g. ones that need to copy supporting files)
+  pre_processor <- function(metadata, input_file, runtime, knit_meta, files_dir,
+                            output_dir) {
+
+    # use files_dir as lib_dir if not explicitly specified
+    if (is.null(lib_dir))
+      lib_dir <- files_dir
+
+    # extra args
+    args <- c()
+
+    # highlight
+    args <- c(args, pandoc_highlight_args(highlight, default = "pygments"))
+
+    # return additional args
+    args
+  }
+
+  # return format
+  output_format(
+    knitr = knitr_options_html(fig_width, fig_height, fig_retina, keep_md, dev),
+    pandoc = pandoc_options(to = "slidy",
+                            from = from_rmarkdown(fig_caption, md_extensions),
+                            args = args),
+    keep_md = keep_md,
+    clean_supporting = self_contained,
+    df_print = df_print,
+    pre_processor = pre_processor,
+    base_format = html_document_base(smart = smart, lib_dir = lib_dir,
+                                     self_contained = self_contained,
+                                     mathjax = mathjax,
+                                     bootstrap_compatible = TRUE,
+                                     pandoc_args = pandoc_args,
+                                     extra_dependencies = extra_dependencies,
+                                     ...))
+}
+------CC2------
+beamer_presentation <- function(toc = FALSE,
+                                slide_level = NULL,
+                                incremental = FALSE,
+                                fig_width = 10,
+                                fig_height = 7,
+                                fig_crop = TRUE,
+                                fig_caption = TRUE,
+                                dev = 'pdf',
+                                df_print = "default",
+                                theme = "default",
+                                colortheme = "default",
+                                fonttheme = "default",
+                                highlight = "default",
+                                template = "default",
+                                keep_tex = FALSE,
+                                latex_engine = "pdflatex",
+                                citation_package = c("none", "natbib", "biblatex"),
+                                self_contained = TRUE,
+                                includes = NULL,
+                                md_extensions = NULL,
+                                pandoc_args = NULL) {
+
+  # base pandoc options for all beamer output
+  args <- c()
+
+  # template path and assets
+  if (!is.null(template)) {
+    if (identical(template, "default")) template <- patch_beamer_template()
+    if (!is.null(template))
+      args <- c(args, "--template", pandoc_path_arg(template))
+  }
+
+  # table of contents
+  if (toc)
+    args <- c(args, "--table-of-contents")
+
+  # slide level
+  if (!is.null(slide_level))
+    args <- c(args, "--slide-level", as.character(slide_level))
+
+  # incremental
+  if (incremental)
+    args <- c(args, "--incremental")
+
+  # themes
+  if (!identical(theme, "default"))
+    args <- c(args, pandoc_variable_arg("theme", theme))
+  if (!identical(colortheme, "default"))
+    args <- c(args, pandoc_variable_arg("colortheme", colortheme))
+  if (!identical(fonttheme, "default"))
+    args <- c(args, pandoc_variable_arg("fonttheme", fonttheme))
+
+  # highlighting
+  if (!is.null(highlight))
+    highlight <- match.arg(highlight, highlighters())
+  args <- c(args, pandoc_highlight_args(highlight))
+
+  # latex engine
+  latex_engine = match.arg(latex_engine, c("pdflatex", "lualatex", "xelatex"))
+  args <- c(args, pandoc_latex_engine_args(latex_engine))
+
+  # citation package
+  citation_package <- match.arg(citation_package)
+  if (citation_package != "none") args <- c(args, paste0("--", citation_package))
+
+  # generate a self-contained LaTeX document (including preamble)
+  if (self_contained) args <- c(args, "--self-contained")
+
+  # content includes
+  args <- c(args, includes_to_pandoc_args(includes))
+
+  # make sure the graphics package is always loaded
+  if (identical(template, "default")) args <- c(args, "--variable", "graphics=yes")
+
+  # custom args
+  args <- c(args, pandoc_args)
+
+  # initialize saved files dir
+  saved_files_dir <- NULL
+
+  pre_processor <- function(metadata, input_file, runtime, knit_meta,
+                                files_dir, output_dir) {
+    # save files dir (for generating intermediates)
+    saved_files_dir <<- files_dir
+
+    # no-op other than caching dir location
+    invisible(NULL)
+  }
+
+  # generate intermediates (required to make resources available for publish)
+  intermediates_generator <- function(original_input, encoding,
+                                      intermediates_dir) {
+    return(pdf_intermediates_generator(saved_files_dir, original_input,
+                                        encoding, intermediates_dir))
+  }
+
+  # return format
+  output_format(
+    knitr = knitr_options_pdf(fig_width, fig_height, fig_crop, dev),
+    pandoc = pandoc_options(to = "beamer",
+                            from = from_rmarkdown(fig_caption, md_extensions),
+                            args = args,
+                            latex_engine = latex_engine,
+                            keep_tex = keep_tex),
+    pre_processor = pre_processor,
+    intermediates_generator = intermediates_generator,
+    clean_supporting = !keep_tex,
+    df_print = df_print
+  )
+}
+------SR1------
+if(!is.null(template)) {
+	if(identical(template, "default")) template <- patch_beamer_template()
+	if(!is.null(template)) args <- c(args, "--template", pandoc_path_arg(template))
+}
+------SR2------
+if(identical(template, "default")) args <- c(args, "--template", pandoc_path_arg(rmarkdown_system_file("rmd/slidy/default.html")))
+else if(!is.null(template)) args <- c(args, "--template", pandoc_path_arg(template))
